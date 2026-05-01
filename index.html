@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>💼 工作時數管理</title>
 
-    <!-- Apple Web App 設定 -->
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/10433/10433049.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="工作時數">
 
-    <!-- 導入思源黑體 Noto Sans TC (400=標準, 500=中黑) -->
+    <!-- 導入思源黑體 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
@@ -26,7 +25,6 @@
         }
 
         body {
-            /* 全面使用思源黑體 */
             font-family: 'Noto Sans TC', -apple-system, sans-serif;
             background: var(--bg-gradient);
             background-attachment: fixed;
@@ -38,7 +36,6 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             font-weight: 400;
-            color: #333;
         }
 
         .page { display: none; width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
@@ -64,18 +61,14 @@
             border-radius: 12px; font-size: 16px; outline: none; background: #fff; font-family: inherit;
         }
 
-        .filter-row { display: flex; gap: 8px; margin-top: 5px; }
-        .filter-row select { flex: 1; }
-
         .progress-section {
             background: rgba(255, 255, 255, 0.5); border: var(--border-style);
-            border-radius: 20px; padding: 12px; margin-bottom: 12px;
+            border-radius: 20px; padding: 15px; margin-bottom: 15px;
         }
 
-        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-        .stat-box { background: var(--accent-color); border: var(--border-style); padding: 10px; border-radius: 15px; font-weight: 500; }
+        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-box { background: var(--accent-color); border: var(--border-style); padding: 12px; border-radius: 15px; font-weight: 500; color: var(--primary-text); }
         .stat-box.highlight { background: var(--warning-color); }
-        .stat-box span { font-weight: 500; font-size: 19px; }
 
         .btn-main {
             width: 100%; padding: 14px; background-color: #ffffff; border: var(--border-style);
@@ -120,20 +113,16 @@
             align-items: center; justify-content: center; font-family: inherit;
         }
         .nav-item.active { color: #4a148c; background: #f3e5f5; }
-
-        .setting-section { border-bottom: 2px dashed #4a148c; padding: 20px 0; text-align: left; }
-        .setting-section:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
 
-    <!-- 第一頁：時數紀錄 -->
     <div id="page-work" class="page active">
         <div class="container">
             <h2>📅 工作時數紀錄</h2>
             <div class="input-group">
                 <label>💪🏻 目標時數 (hr)</label>
-                <input type="number" id="goalInput" value="38" oninput="saveToStorage(); renderAll();">
+                <input type="number" id="goalInput" oninput="saveToStorage(); renderAll();">
             </div>
             <div class="input-group">
                 <label>💜 今日時數</label>
@@ -143,20 +132,26 @@
                 </div>
             </div>
             <button class="btn-main" onclick="addRecord()">💾 儲存時數 SAVE</button>
+            
+            <!-- 已替換為你要求的區塊 -->
             <div class="progress-section">
                 <div class="stats-container">
-                    <div class="stat-box highlight">目前剩餘<span id="sessionGap">0</span> hr</div>
-                    <div class="stat-box">目前累計<span id="sessionTotal">0</span> hr</div>
+                    <div class="stat-box highlight">
+                        <span style="font-size: 14px; opacity: 0.8; font-weight: 400;">目前剩餘</span><br>
+                        <span id="sessionGap" style="font-size: 20px; font-weight: 500;">0</span> hr
+                    </div>
+                    <div class="stat-box">
+                        <span style="font-size: 14px; opacity: 0.8; font-weight: 400;">目前累計</span><br>
+                        <span id="sessionTotal" style="font-size: 20px; font-weight: 500;">0</span> hr
+                    </div>
                 </div>
             </div>
+
             <button class="btn-settle" onclick="settleAndReset()">🏁 完成本期結算</button>
             <div class="input-group">
-                <label>🔍 歷史查詢 (年 / 月)</label>
-                <div class="filter-row">
-                    <select id="yearSelect" onchange="renderAll()">
-                        <option value="2026">2026 年</option>
-                        <option value="2027">2027 年</option>
-                    </select>
+                <label>🔍 歷史查詢</label>
+                <div style="display: flex; gap: 8px; margin-top: 5px;">
+                    <select id="yearSelect" onchange="renderAll()"></select>
                     <select id="monthSelect" onchange="renderAll()"></select>
                 </div>
             </div>
@@ -164,15 +159,14 @@
         </div>
     </div>
 
-    <!-- 第二頁：設定 -->
     <div id="page-config" class="page">
         <div class="container">
             <h2>⚙️ 備份與設定</h2>
-            <div class="setting-section">
+            <div style="text-align: left; margin-bottom: 20px; border-bottom: 2px dashed #4a148c; padding-bottom: 15px;">
                 <label>📤 備份資料 (Export)</label>
                 <button class="btn-main" onclick="exportData()">匯出 .JSON 檔案</button>
             </div>
-            <div class="setting-section">
+            <div style="text-align: left;">
                 <label>📥 還原資料 (Import)</label>
                 <button class="btn-main" onclick="document.getElementById('importFile').click()">選擇檔案匯入</button>
                 <input type="file" id="importFile" style="display:none" onchange="importData(event)">
@@ -186,25 +180,28 @@
     </div>
 
 <script>
-    /* 功能邏輯完整版 */
     let records = JSON.parse(localStorage.getItem('workRecords')) || [];
     let lastSettleTime = parseInt(localStorage.getItem('lastSettleTime')) || 0;
+    let savedGoal = localStorage.getItem('workGoal') || "38";
 
     function showPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById('page-' + pageId).classList.add('active');
         document.getElementById('nav-' + pageId).classList.add('active');
-        window.scrollTo(0, 0);
         renderAll();
     }
 
-    function initFilters() {
+    function init() {
+        const ySelect = document.getElementById('yearSelect');
         const mSelect = document.getElementById('monthSelect');
         const now = new Date();
+        for (let y = 2025; y <= 2027; y++) ySelect.add(new Option(`${y} 年`, y));
         for (let i = 1; i <= 12; i++) mSelect.add(new Option(`${i} 月`, i));
-        document.getElementById('yearSelect').value = now.getFullYear();
+        ySelect.value = now.getFullYear();
         mSelect.value = now.getMonth() + 1;
+        document.getElementById('goalInput').value = savedGoal;
+        renderAll();
     }
 
     function addRecord() {
@@ -221,16 +218,16 @@
     }
 
     function renderAll() {
-        const goal = parseFloat(document.getElementById('goalInput').value) || 38;
+        const goal = parseFloat(document.getElementById('goalInput').value) || 0;
         const year = parseInt(document.getElementById('yearSelect').value);
         const month = parseInt(document.getElementById('monthSelect').value);
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = "";
 
-        let sessionTotal = 0;
-        records.forEach(r => { if (r.id > lastSettleTime) sessionTotal += r.hours; });
-        document.getElementById('sessionTotal').innerText = sessionTotal.toFixed(1);
-        document.getElementById('sessionGap').innerText = Math.max(0, goal - sessionTotal).toFixed(1);
+        let currentTotal = 0;
+        records.forEach(r => { if (r.id > lastSettleTime) currentTotal += r.hours; });
+        document.getElementById('sessionTotal').innerText = currentTotal.toFixed(1);
+        document.getElementById('sessionGap').innerText = Math.max(0, goal - currentTotal).toFixed(1);
 
         ['日', '一', '二', '三', '四', '五', '六'].forEach(w => {
             const h = document.createElement('div'); h.className = 'calendar-day-head'; h.innerText = w; grid.appendChild(h);
@@ -248,14 +245,14 @@
                 const sum = dayRecords.reduce((s, r) => s + r.hours, 0);
                 cell.innerHTML = `<span class="date-num">${i}</span><div class="work-label">${sum.toFixed(1)}h</div>`;
             } else { cell.innerHTML = `<span class="date-num">${i}</span>`; }
-            cell.onclick = () => handleDateClick(year, month, i, dayRecords);
+            cell.onclick = () => handleDateEdit(year, month, i, dayRecords);
             grid.appendChild(cell);
         }
     }
 
-    function handleDateClick(y, m, d, dayRecords) {
-        const currentTotal = dayRecords.reduce((s, r) => s + r.hours, 0).toFixed(1);
-        const newVal = prompt(`修改 [ ${m}/${d} ] 的工時紀錄：`, currentTotal);
+    function handleDateEdit(y, m, d, dayRecords) {
+        const currentVal = dayRecords.reduce((s, r) => s + r.hours, 0).toFixed(1);
+        const newVal = prompt(`修改 [ ${m}/${d} ] 時數：`, currentVal);
         if (newVal !== null && !isNaN(newVal)) {
             records = records.filter(r => !(r.year === y && r.month === m && r.day === d));
             if (parseFloat(newVal) > 0) records.unshift({ id: Date.now(), year: y, month: m, day: d, hours: parseFloat(newVal) });
@@ -264,7 +261,7 @@
     }
 
     function settleAndReset() {
-        if (confirm("確定完成本期結算？目前的累計時數將歸零重新計算。")) {
+        if (confirm("確定本期結算？累計將歸零。")) {
             lastSettleTime = Date.now(); localStorage.setItem('lastSettleTime', lastSettleTime); renderAll();
         }
     }
@@ -278,7 +275,7 @@
         const data = { records, lastSettleTime, goal: document.getElementById('goalInput').value };
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = `WorkBackup_${new Date().toLocaleDateString()}.json`; a.click();
+        a.download = `WorkHours_Backup.json`; a.click();
     }
 
     function importData(e) {
@@ -290,14 +287,12 @@
                 records = data.records || []; lastSettleTime = data.lastSettleTime || 0;
                 document.getElementById('goalInput').value = data.goal || 38;
                 saveToStorage(); alert("還原成功！"); renderAll();
-            } catch(e) { alert("格式錯誤"); }
+            } catch(e) { alert("檔案格式錯誤"); }
         };
         reader.readAsText(file);
     }
 
-    initFilters();
-    if(localStorage.getItem('workGoal')) document.getElementById('goalInput').value = localStorage.getItem('workGoal');
-    renderAll();
+    window.onload = init;
 </script>
 </body>
 </html>
