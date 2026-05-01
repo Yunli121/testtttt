@@ -56,11 +56,9 @@
             width: 100%; padding: 16px; background-color: #fff; border: var(--border-style);
             border-radius: 14px; font-weight: 900; font-size: 18px; color: #000;
             cursor: pointer; box-shadow: 5px 5px 0px #000; margin-bottom: 15px;
-            transition: transform 0.1s;
         }
         .btn-main:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0px #000; }
 
-        /* 日曆風格 */
         .calendar-grid {
             display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; background: #fff;
             padding: 12px; border: var(--border-style); border-radius: 18px; margin-top: 15px;
@@ -73,7 +71,6 @@
         .calendar-cell.has-data { background-color: var(--accent-color); border: var(--border-style); }
         .work-label { background: #000; color: #fff; font-size: 10px; padding: 2px 4px; border-radius: 5px; margin-top: 4px; }
 
-        /* 底部導覽 - 粗體無框感 */
         .bottom-nav {
             position: fixed; bottom: 25px; width: 90%; max-width: 400px;
             background: #fff; border: var(--border-style); border-radius: 50px;
@@ -84,12 +81,10 @@
         .nav-item.active { color: #000; text-decoration: underline; text-underline-offset: 6px; }
 
         .setting-section { border-bottom: 2px dashed #000; padding: 20px 0; text-align: left; }
-        .setting-section:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
 
-    <!-- 第一頁：時數紀錄 -->
     <div id="page-work" class="page active">
         <div class="container">
             <h2>💼 WORK LOG</h2>
@@ -125,26 +120,21 @@
             </div>
 
             <div id="calendarGrid" class="calendar-grid"></div>
-            <p style="font-size: 11px; margin-top: 10px; color: #666;">* 點擊日曆日期即可直接修改時數</p>
         </div>
     </div>
 
-    <!-- 第二頁：設定 -->
     <div id="page-config" class="page">
         <div class="container">
             <h2>⚙️ SETTINGS</h2>
-            
             <div class="setting-section">
                 <label>📤 備份資料 (Export)</label>
                 <button class="btn-main" onclick="exportData()">匯出 .JSON 檔案</button>
             </div>
-
             <div class="setting-section">
                 <label>📥 還原資料 (Import)</label>
                 <button class="btn-main" onclick="document.getElementById('importFile').click()">選擇檔案並匯入</button>
                 <input type="file" id="importFile" style="display:none" onchange="importData(event)">
             </div>
-
             <div class="setting-section">
                 <label>🏁 週期結算</label>
                 <button class="btn-main" style="background:#ffda79;" onclick="settleAndReset()">完成結算 (統計歸零)</button>
@@ -152,7 +142,6 @@
         </div>
     </div>
 
-    <!-- 底部導覽 -->
     <div class="bottom-nav">
         <button id="nav-work" class="nav-item active" onclick="showPage('work')">LOGS</button>
         <button id="nav-config" class="nav-item" onclick="showPage('config')">CONFIG</button>
@@ -175,8 +164,7 @@
         const now = new Date();
         for (let i = 0; i < 12; i++) {
             const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            const val = `${d.getFullYear()}-${d.getMonth() + 1}`;
-            select.add(new Option(`${d.getFullYear()} 年 ${d.getMonth() + 1} 月`, val));
+            select.add(new Option(`${d.getFullYear()} 年 ${d.getMonth() + 1} 月`, `${d.getFullYear()}-${d.getMonth() + 1}`));
         }
     }
 
@@ -185,44 +173,30 @@
         const min = parseFloat(document.getElementById('dailyMin').value) || 0;
         const total = h + (min / 60);
         if (total <= 0) return;
-        records.unshift({ 
-            id: Date.now(), 
-            year: new Date().getFullYear(), 
-            month: new Date().getMonth()+1, 
-            day: new Date().getDate(), 
-            hours: total 
-        });
+        records.unshift({ id: Date.now(), year: new Date().getFullYear(), month: new Date().getMonth()+1, day: new Date().getDate(), hours: total });
         saveToStorage();
         document.getElementById('dailyHour').value = "";
         document.getElementById('dailyMin').value = "";
         renderAll();
     }
 
-    // 修改邏輯：點擊直接修改
+    // 核心修改：將時數改為 0 等於移除該日紀錄
     function modifyDay(year, month, day) {
         const dayRecords = records.filter(r => r.year === year && r.month === month && r.day === day);
+        const currentTotal = dayRecords.reduce((s, r) => s + r.hours, 0);
+        const newVal = prompt(`修改 ${month}/${day} 的工時 (輸入 0 則清除紀錄)：`, currentTotal.toFixed(1));
         
-        if (dayRecords.length > 0) {
-            // 取該天所有紀錄的總和作為預設值
-            const currentTotal = dayRecords.reduce((s, r) => s + r.hours, 0);
-            const newVal = prompt(`修改 ${month}/${day} 的總工時：`, currentTotal.toFixed(1));
+        if (newVal !== null && !isNaN(newVal)) {
+            const parsedVal = parseFloat(newVal);
+            // 先移除該天所有舊紀錄
+            records = records.filter(r => !(r.year === year && r.month === month && r.day === day));
             
-            if (newVal !== null && !isNaN(newVal) && newVal !== "") {
-                // 修改做法：保留原本的第一筆 ID，更新時數，並刪除該天其他多餘筆數 (整合成一筆)
-                const mainRecord = dayRecords[0];
-                mainRecord.hours = parseFloat(newVal);
-                records = records.filter(r => !(r.year === year && r.month === month && r.day === day && r.id !== mainRecord.id));
-                saveToStorage();
-                renderAll();
+            // 如果輸入大於 0，則新增一筆整合後的紀錄
+            if (parsedVal > 0) {
+                records.unshift({ id: Date.now(), year, month, day, hours: parsedVal });
             }
-        } else {
-            // 空白日期則新增
-            const val = prompt(`補記 ${month}/${day} 的工時：`);
-            if(val !== null && !isNaN(val) && val !== "") {
-                records.unshift({ id: Date.now(), year, month, day, hours: parseFloat(val) });
-                saveToStorage();
-                renderAll();
-            }
+            saveToStorage();
+            renderAll();
         }
     }
 
@@ -260,14 +234,13 @@
                 const sum = dayRecords.reduce((s, r) => s + r.hours, 0);
                 cell.innerHTML = `<span>${i}</span><div class="work-label">${sum.toFixed(1)}h</div>`;
             } else { cell.innerHTML = `<span>${i}</span>`; }
-            
             cell.onclick = () => modifyDay(year, month, i);
             grid.appendChild(cell);
         }
     }
 
     function settleAndReset() {
-        if (confirm("確定完成結算？本期累計將歸零，但歷史紀錄會保留。")) {
+        if (confirm("結算完成後本期統計會歸零，確定嗎？")) {
             lastSettleTime = Date.now();
             localStorage.setItem('lastSettleTime', lastSettleTime);
             renderAll();
@@ -277,27 +250,18 @@
     function exportData() {
         const data = { records, lastSettleTime, goal: document.getElementById('goalInput').value };
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `WorkBackup_${new Date().toLocaleDateString()}.json`;
-        a.click();
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+        a.download = `WorkBackup_${new Date().toLocaleDateString()}.json`; a.click();
     }
 
     function importData(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+        const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = (event) => {
-            try {
-                const data = JSON.parse(event.target.result);
-                records = data.records || [];
-                lastSettleTime = data.lastSettleTime || 0;
-                document.getElementById('goalInput').value = data.goal || 38;
-                saveToStorage();
-                localStorage.setItem('lastSettleTime', lastSettleTime);
-                alert("還原成功！");
-                showPage('work');
-            } catch(e) { alert("檔案格式錯誤"); }
+            const data = JSON.parse(event.target.result);
+            records = data.records || []; lastSettleTime = data.lastSettleTime || 0;
+            document.getElementById('goalInput').value = data.goal || 38;
+            saveToStorage(); renderAll(); alert("還原成功！");
         };
         reader.readAsText(file);
     }
