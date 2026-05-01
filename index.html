@@ -10,7 +10,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="工作時數">
 
-    <!-- 導入思源黑體 500 字重 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500&display=swap" rel="stylesheet">
 
     <style>
@@ -35,7 +34,6 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
         }
 
         .page { display: none; width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
@@ -51,14 +49,14 @@
             text-align: center;
         }
 
-        h2 { margin: 0 0 15px 0; color: var(--primary-text); font-size: 22px; font-weight: 500; }
+        h2 { margin: 0 0 15px 0; color: var(--primary-text); font-size: 22px; }
 
         .input-group { margin-bottom: 12px; text-align: left; }
         label { display: block; margin-bottom: 5px; font-size: 13px; color: #6a1b9a; font-weight: 500; }
 
         input, select {
             width: 100%; padding: 10px; box-sizing: border-box; border: var(--border-style);
-            border-radius: 12px; font-size: 16px; outline: none; background: #fff; font-family: inherit; font-weight: 500;
+            border-radius: 12px; font-size: 16px; outline: none; background: #fff; font-family: inherit;
         }
 
         .progress-section {
@@ -75,47 +73,39 @@
             border-radius: 12px; font-weight: 500; font-size: 16px; color: var(--primary-text);
             cursor: pointer; box-shadow: 5px 5px 0px #4a148c; margin-bottom: 12px; font-family: inherit;
         }
-        .btn-main:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #4a148c; }
 
         .btn-settle {
             width: 100%; padding: 10px; background-color: #f3e5f5; border: 1.5px dashed #4a148c;
-            border-radius: 10px; font-size: 13px; color: #4a148c; cursor: pointer; margin-bottom: 20px; font-family: inherit; font-weight: 500;
+            border-radius: 10px; font-size: 13px; color: #4a148c; cursor: pointer; margin-bottom: 20px;
         }
 
-        .hint-text {
-            font-size: 13px; color: #7b1fa2; margin: 10px 0; text-align: left; font-weight: 500; display: block;
-        }
+        .hint-text { font-size: 13px; color: #7b1fa2; margin: 10px 0; text-align: left; display: block; }
 
         .calendar-grid {
             display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #fff;
             padding: 10px; border: var(--border-style); border-radius: 15px;
         }
-        .calendar-day-head { font-size: 10px; font-weight: 500; color: #7b1fa2; padding-bottom: 5px; }
+        .calendar-day-head { font-size: 10px; color: #7b1fa2; padding-bottom: 5px; }
         .calendar-cell {
             aspect-ratio: 1 / 1.3; border: 1px solid #eee; border-radius: 8px;
             display: flex; flex-direction: column; align-items: center; padding-top: 4px;
-            font-size: 12px; cursor: pointer; font-weight: 500;
+            font-size: 12px; cursor: pointer;
         }
         .calendar-cell.has-data { background-color: #f3e5f5; border: 1.5px solid #4a148c; }
         .date-num { color: #999; }
-        .has-data .date-num { color: #4a148c; font-weight: 500; }
+        .has-data .date-num { color: #4a148c; font-weight: bold; }
 
         .work-label {
             background: #4a148c; color: white; font-size: 9px; padding: 1px 3px;
-            border-radius: 4px; margin-top: 4px; max-width: 90%;
+            border-radius: 4px; margin-top: 4px;
         }
 
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
             background: #fff; border-top: var(--border-style); display: flex;
             justify-content: space-around; align-items: center; z-index: 1000;
-            padding-bottom: env(safe-area-inset-bottom);
         }
-        .nav-item { 
-            flex: 1; height: 100%; background: none; border: none; font-weight: 500; 
-            color: #aaa; cursor: pointer; font-size: 16px; display: flex;
-            align-items: center; justify-content: center; font-family: inherit;
-        }
+        .nav-item { flex: 1; height: 100%; background: none; border: none; color: #aaa; font-size: 16px; font-family: inherit; }
         .nav-item.active { color: #4a148c; background: #f3e5f5; }
     </style>
 </head>
@@ -140,12 +130,12 @@
             <div class="progress-section">
                 <div class="stats-container">
                     <div class="stat-box highlight">
-                        <span style="font-size: 15px; opacity: 0.8; font-weight: 500;">目前剩餘</span><br>
-                        <span id="sessionGap" style="font-size: 20px; font-weight: 500;">0</span> hr
+                        <span style="font-size: 15px; opacity: 0.8;">目前剩餘</span><br>
+                        <span id="sessionGap">0</span> hr
                     </div>
                     <div class="stat-box">
-                        <span style="font-size: 15px; opacity: 0.8; font-weight: 500;">目前累計</span><br>
-                        <span id="sessionTotal" style="font-size: 20px; font-weight: 500;">0</span> hr
+                        <span style="font-size: 15px; opacity: 0.8;">目前累計</span><br>
+                        <span id="sessionTotal">0</span> hr
                     </div>
                 </div>
             </div>
@@ -158,7 +148,6 @@
             </div>
 
             <span class="hint-text">💡 點擊日期可「補記」或「修改」</span>
-
             <div class="calendar-grid" id="calendarGrid"></div>
         </div>
     </div>
@@ -166,15 +155,9 @@
     <div id="page-config" class="page">
         <div class="container">
             <h2>⚙️ 備份與設定</h2>
-            <div style="text-align: left; margin-bottom: 20px; border-bottom: 2px dashed #4a148c; padding-bottom: 15px;">
-                <label>📤 備份資料 (Export)</label>
-                <button class="btn-main" onclick="exportData()">匯出 .JSON 檔案</button>
-            </div>
-            <div style="text-align: left;">
-                <label>📥 還原資料 (Import)</label>
-                <button class="btn-main" onclick="document.getElementById('importFile').click()">選擇檔案匯入</button>
-                <input type="file" id="importFile" style="display:none" onchange="importData(event)">
-            </div>
+            <button class="btn-main" onclick="exportData()">匯出 .JSON 檔案</button>
+            <button class="btn-main" onclick="document.getElementById('importFile').click()">選擇檔案匯入</button>
+            <input type="file" id="importFile" style="display:none" onchange="importData(event)">
         </div>
     </div>
 
@@ -193,13 +176,11 @@
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById('page-' + pageId).classList.add('active');
         document.getElementById('nav-' + pageId).classList.add('active');
-        renderAll();
     }
 
     function init() {
         const select = document.getElementById('monthFilter');
         const now = new Date();
-        // 生成最近六個月的選項
         for (let i = 0; i < 6; i++) {
             const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
             const val = `${d.getFullYear()}-${d.getMonth() + 1}`;
@@ -216,21 +197,16 @@
         const total = h + (min / 60);
         if (total <= 0) return;
         const now = new Date();
-        saveToRecords(now.getFullYear(), now.getMonth() + 1, now.getDate(), total);
+        records.unshift({ id: Date.now(), year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(), hours: total });
+        saveToStorage();
         document.getElementById('dailyHour').value = "";
         document.getElementById('dailyMin').value = "";
-    }
-
-    function saveToRecords(y, m, d, hours) {
-        records.unshift({ id: Date.now(), year: y, month: m, day: d, hours: hours });
-        saveToStorage();
         renderAll();
     }
 
     function renderAll() {
         const goal = parseFloat(document.getElementById('goalInput').value) || 0;
         const filterVal = document.getElementById('monthFilter').value;
-        if (!filterVal) return;
         const [year, month] = filterVal.split('-').map(Number);
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = "";
