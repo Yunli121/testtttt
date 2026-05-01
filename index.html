@@ -26,7 +26,7 @@
 
         body {
             font-family: 'Noto Sans TC', -apple-system, sans-serif;
-            font-weight: 500; /* 微微微調加粗 */
+            font-weight: 500;
             background: var(--bg-gradient);
             background-attachment: fixed;
             margin: 0;
@@ -80,6 +80,16 @@
         .btn-settle {
             width: 100%; padding: 10px; background-color: #f3e5f5; border: 1.5px dashed #4a148c;
             border-radius: 10px; font-size: 13px; color: #4a148c; cursor: pointer; margin-bottom: 20px; font-family: inherit; font-weight: 500;
+        }
+
+        /* 小提醒文字樣式 */
+        .hint-text {
+            font-size: 13px;
+            color: #7b1fa2;
+            margin: 10px 0;
+            text-align: left;
+            font-weight: 500;
+            display: block;
         }
 
         .calendar-grid {
@@ -147,6 +157,7 @@
             </div>
 
             <button class="btn-settle" onclick="settleAndReset()">🏁 完成本期結算</button>
+            
             <div class="input-group">
                 <label>🔍 歷史查詢</label>
                 <div style="display: flex; gap: 8px; margin-top: 5px;">
@@ -154,6 +165,9 @@
                     <select id="monthSelect" onchange="renderAll()"></select>
                 </div>
             </div>
+
+            <span class="hint-text">💡 點擊日期可「補記」或「修改」</span>
+
             <div class="calendar-grid" id="calendarGrid"></div>
         </div>
     </div>
@@ -251,11 +265,18 @@
 
     function handleDateEdit(y, m, d, dayRecords) {
         const currentVal = dayRecords.reduce((s, r) => s + r.hours, 0).toFixed(1);
-        const newVal = prompt(`修改 [ ${m}/${d} ] 時數：`, currentVal);
+        const newVal = prompt(`修改 [ ${m}/${d} ] 時數：\n(輸入 0 可以刪除當日紀錄)`, currentVal);
+        
         if (newVal !== null && !isNaN(newVal)) {
+            // 先過濾掉當天所有紀錄
             records = records.filter(r => !(r.year === y && r.month === m && r.day === d));
-            if (parseFloat(newVal) > 0) records.unshift({ id: Date.now(), year: y, month: m, day: d, hours: parseFloat(newVal) });
-            saveToStorage(); renderAll();
+            
+            // 如果輸入大於 0 則新增一筆新的，如果輸入 0 則不新增（等同於刪除）
+            if (parseFloat(newVal) > 0) {
+                records.unshift({ id: Date.now(), year: y, month: m, day: d, hours: parseFloat(newVal) });
+            }
+            saveToStorage(); 
+            renderAll();
         }
     }
 
