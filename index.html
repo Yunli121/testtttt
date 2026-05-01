@@ -24,7 +24,7 @@
         }
 
         body {
-            font-family: 'Noto Sans TC', -apple-system, sans-serif;
+            font-family: 'Noto Sans TC', sans-serif;
             font-weight: 500;
             background: var(--bg-gradient);
             background-attachment: fixed;
@@ -34,6 +34,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            font-size: 13px; /* 統一字體大小 */
         }
 
         .page { display: none; width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
@@ -49,14 +50,15 @@
             text-align: center;
         }
 
-        h2 { margin: 0 0 15px 0; color: var(--primary-text); font-size: 22px; }
+        h2 { margin: 0 0 15px 0; color: var(--primary-text); font-size: 18px; font-weight: 500; }
 
         .input-group { margin-bottom: 12px; text-align: left; }
         label { display: block; margin-bottom: 5px; font-size: 13px; color: #6a1b9a; font-weight: 500; }
 
         input, select {
             width: 100%; padding: 10px; box-sizing: border-box; border: var(--border-style);
-            border-radius: 12px; font-size: 16px; outline: none; background: #fff; font-family: inherit;
+            border-radius: 12px; font-size: 13px; outline: none; background: #fff; 
+            font-family: 'Noto Sans TC', sans-serif; font-weight: 500;
         }
 
         .progress-section {
@@ -67,33 +69,37 @@
         .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .stat-box { background: var(--accent-color); border: var(--border-style); padding: 12px; border-radius: 15px; color: var(--primary-text); }
         .stat-box.highlight { background: var(--warning-color); }
+        .stat-label { font-size: 13px; opacity: 0.8; }
+        .stat-value { font-size: 18px; font-weight: 500; }
 
         .btn-main {
             width: 100%; padding: 14px; background-color: #ffffff; border: var(--border-style);
-            border-radius: 12px; font-weight: 500; font-size: 16px; color: var(--primary-text);
+            border-radius: 12px; font-weight: 500; font-size: 13px; color: var(--primary-text);
             cursor: pointer; box-shadow: 5px 5px 0px #4a148c; margin-bottom: 12px; font-family: inherit;
         }
+        .btn-main:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #4a148c; }
 
         .btn-settle {
             width: 100%; padding: 10px; background-color: #f3e5f5; border: 1.5px dashed #4a148c;
             border-radius: 10px; font-size: 13px; color: #4a148c; cursor: pointer; margin-bottom: 20px;
+            font-family: inherit; font-weight: 500;
         }
 
-        .hint-text { font-size: 13px; color: #7b1fa2; margin: 10px 0; text-align: left; display: block; }
+        .hint-text { font-size: 13px; color: #7b1fa2; margin: 10px 0; text-align: left; display: block; font-weight: 500; }
 
         .calendar-grid {
             display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #fff;
             padding: 10px; border: var(--border-style); border-radius: 15px;
         }
-        .calendar-day-head { font-size: 10px; color: #7b1fa2; padding-bottom: 5px; }
+        .calendar-day-head { font-size: 11px; font-weight: 500; color: #7b1fa2; padding-bottom: 5px; }
         .calendar-cell {
             aspect-ratio: 1 / 1.3; border: 1px solid #eee; border-radius: 8px;
             display: flex; flex-direction: column; align-items: center; padding-top: 4px;
-            font-size: 12px; cursor: pointer;
+            font-size: 11px; cursor: pointer; font-weight: 500;
         }
         .calendar-cell.has-data { background-color: #f3e5f5; border: 1.5px solid #4a148c; }
         .date-num { color: #999; }
-        .has-data .date-num { color: #4a148c; font-weight: bold; }
+        .has-data .date-num { color: #4a148c; font-weight: 500; }
 
         .work-label {
             background: #4a148c; color: white; font-size: 9px; padding: 1px 3px;
@@ -104,8 +110,9 @@
             position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
             background: #fff; border-top: var(--border-style); display: flex;
             justify-content: space-around; align-items: center; z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
         }
-        .nav-item { flex: 1; height: 100%; background: none; border: none; color: #aaa; font-size: 16px; font-family: inherit; }
+        .nav-item { flex: 1; height: 100%; background: none; border: none; color: #aaa; font-size: 13px; font-family: inherit; font-weight: 500; }
         .nav-item.active { color: #4a148c; background: #f3e5f5; }
     </style>
 </head>
@@ -130,12 +137,12 @@
             <div class="progress-section">
                 <div class="stats-container">
                     <div class="stat-box highlight">
-                        <span style="font-size: 15px; opacity: 0.8;">目前剩餘</span><br>
-                        <span id="sessionGap">0</span> hr
+                        <span class="stat-label">目前剩餘</span><br>
+                        <span id="sessionGap" class="stat-value">0</span> hr
                     </div>
                     <div class="stat-box">
-                        <span style="font-size: 15px; opacity: 0.8;">目前累計</span><br>
-                        <span id="sessionTotal">0</span> hr
+                        <span class="stat-label">目前累計</span><br>
+                        <span id="sessionTotal" class="stat-value">0</span> hr
                     </div>
                 </div>
             </div>
@@ -143,8 +150,11 @@
             <button class="btn-settle" onclick="settleAndReset()">🏁 完成本期結算</button>
             
             <div class="input-group">
-                <label>🔍 歷史回顧</label>
-                <select id="monthFilter" onchange="renderAll()"></select>
+                <label>🔍 歷史回顧 (年份 / 月份)</label>
+                <div style="display: flex; gap: 8px;">
+                    <select id="yearSelect" onchange="renderAll()"></select>
+                    <select id="monthSelect" onchange="renderAll()"></select>
+                </div>
             </div>
 
             <span class="hint-text">💡 點擊日期可「補記」或「修改」</span>
@@ -176,17 +186,26 @@
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById('page-' + pageId).classList.add('active');
         document.getElementById('nav-' + pageId).classList.add('active');
+        renderAll();
     }
 
     function init() {
-        const select = document.getElementById('monthFilter');
+        const ySelect = document.getElementById('yearSelect');
+        const mSelect = document.getElementById('monthSelect');
         const now = new Date();
-        for (let i = 0; i < 6; i++) {
-            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            const val = `${d.getFullYear()}-${d.getMonth() + 1}`;
-            const text = `${d.getFullYear()}年 ${d.getMonth() + 1}月`;
-            select.add(new Option(text, val));
+        
+        // 年份選單 (去年、今年、明年)
+        for (let i = now.getFullYear() - 1; i <= now.getFullYear() + 1; i++) {
+            ySelect.add(new Option(i + " 年", i));
         }
+        ySelect.value = now.getFullYear();
+
+        // 月份選單
+        for (let i = 1; i <= 12; i++) {
+            mSelect.add(new Option(i + " 月", i));
+        }
+        mSelect.value = now.getMonth() + 1;
+
         document.getElementById('goalInput').value = savedGoal;
         renderAll();
     }
@@ -197,7 +216,13 @@
         const total = h + (min / 60);
         if (total <= 0) return;
         const now = new Date();
-        records.unshift({ id: Date.now(), year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(), hours: total });
+        records.unshift({ 
+            id: Date.now(), 
+            year: now.getFullYear(), 
+            month: now.getMonth() + 1, 
+            day: now.getDate(), 
+            hours: total 
+        });
         saveToStorage();
         document.getElementById('dailyHour').value = "";
         document.getElementById('dailyMin').value = "";
@@ -206,24 +231,28 @@
 
     function renderAll() {
         const goal = parseFloat(document.getElementById('goalInput').value) || 0;
-        const filterVal = document.getElementById('monthFilter').value;
-        const [year, month] = filterVal.split('-').map(Number);
+        const year = parseInt(document.getElementById('yearSelect').value);
+        const month = parseInt(document.getElementById('monthSelect').value);
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = "";
 
+        // 計算累計（排除已結算）
         let currentTotal = 0;
         records.forEach(r => { if (r.id > lastSettleTime) currentTotal += r.hours; });
         document.getElementById('sessionTotal').innerText = currentTotal.toFixed(1);
         document.getElementById('sessionGap').innerText = Math.max(0, goal - currentTotal).toFixed(1);
 
+        // 日曆表頭
         ['日', '一', '二', '三', '四', '五', '六'].forEach(w => {
             const h = document.createElement('div'); h.className = 'calendar-day-head'; h.innerText = w; grid.appendChild(h);
         });
 
+        // 日曆填空
         const firstDay = new Date(year, month - 1, 1).getDay();
         const daysInMonth = new Date(year, month, 0).getDate();
         for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
 
+        // 日期生成
         for (let i = 1; i <= daysInMonth; i++) {
             const cell = document.createElement('div'); cell.className = 'calendar-cell';
             const dayRecords = records.filter(r => r.year === year && r.month === month && r.day === i);
