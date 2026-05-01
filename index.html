@@ -9,17 +9,17 @@
             --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1f5fe 100%);
             --accent-color: #e1bee7; 
             --warning-color: #fffde7; 
-            --border-style: 2.2px solid #000; /* 回歸純黑粗線條無框感 */
+            --border-style: 2.2px solid #000;
             --card-bg: rgba(255, 255, 255, 0.95);
             --primary-text: #000;
-            --shadow: 6px 6px 0px #000;
+            --shadow: 8px 8px 0px #000;
         }
 
         body {
             font-family: -apple-system, sans-serif;
             background: var(--bg-gradient);
             margin: 0;
-            padding-bottom: 90px;
+            padding-bottom: 100px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -31,90 +31,92 @@
 
         .container {
             background: var(--card-bg);
-            padding: 20px;
+            padding: 25px;
             border: var(--border-style);
             box-shadow: var(--shadow);
-            border-radius: 20px;
+            border-radius: 24px;
+            text-align: center;
         }
 
-        h2 { margin: 0 0 15px 0; text-align: center; color: var(--primary-text); font-size: 22px; text-transform: uppercase; }
+        h2 { margin: 0 0 20px 0; color: var(--primary-text); font-size: 24px; font-weight: 900; }
         
-        .input-group { margin-bottom: 12px; }
-        label { display: block; font-weight: 900; margin-bottom: 5px; font-size: 13px; color: #000; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-weight: 900; margin-bottom: 8px; font-size: 14px; }
+        
         input, select {
             width: 100%; padding: 12px; box-sizing: border-box; border: var(--border-style);
-            border-radius: 10px; font-size: 16px; outline: none; background: #fff; font-weight: bold;
+            border-radius: 12px; font-size: 16px; outline: none; background: #fff; font-weight: bold;
         }
 
-        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; }
-        .stat-box { background: var(--accent-color); border: var(--border-style); padding: 12px; border-radius: 12px; text-align: center; font-weight: 900; }
+        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+        .stat-box { background: var(--accent-color); border: var(--border-style); padding: 15px; border-radius: 18px; font-weight: 900; }
         .stat-box.highlight { background: var(--warning-color); }
 
         .btn-main {
-            width: 100%; padding: 14px; background-color: #fff; border: var(--border-style);
-            border-radius: 12px; font-weight: 900; font-size: 16px; color: #000;
-            cursor: pointer; box-shadow: 4px 4px 0px #000; margin-bottom: 12px;
+            width: 100%; padding: 16px; background-color: #fff; border: var(--border-style);
+            border-radius: 14px; font-weight: 900; font-size: 18px; color: #000;
+            cursor: pointer; box-shadow: 5px 5px 0px #000; margin-bottom: 15px;
+            transition: transform 0.1s;
         }
-        .btn-main:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+        .btn-main:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0px #000; }
 
+        /* 日曆風格 */
         .calendar-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; background: #fff;
-            padding: 8px; border: var(--border-style); border-radius: 12px; margin-top: 10px;
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; background: #fff;
+            padding: 12px; border: var(--border-style); border-radius: 18px; margin-top: 15px;
         }
-        .calendar-day-head { font-size: 11px; font-weight: 900; text-align: center; color: #000; padding-bottom: 5px; }
+        .calendar-day-head { font-size: 12px; font-weight: 900; color: #000; padding-bottom: 8px; }
         .calendar-cell {
-            aspect-ratio: 1 / 1.2; border: 1px solid #ddd; border-radius: 6px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; font-weight: bold;
+            aspect-ratio: 1 / 1.3; border: 1.5px solid #eee; border-radius: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; font-weight: bold;
         }
         .calendar-cell.has-data { background-color: var(--accent-color); border: var(--border-style); }
-        .work-label { background: #000; color: #fff; font-size: 9px; padding: 1px 3px; border-radius: 3px; margin-top: 3px; }
+        .work-label { background: #000; color: #fff; font-size: 10px; padding: 2px 4px; border-radius: 5px; margin-top: 4px; }
 
+        /* 底部導覽 - 粗體無框感 */
         .bottom-nav {
-            position: fixed; bottom: 20px; width: 90%; max-width: 400px;
+            position: fixed; bottom: 25px; width: 90%; max-width: 400px;
             background: #fff; border: var(--border-style); border-radius: 50px;
-            display: flex; justify-content: space-around; padding: 12px 0;
-            box-shadow: 6px 6px 0px #000; z-index: 100;
+            display: flex; justify-content: space-around; padding: 15px 0;
+            box-shadow: 8px 8px 0px #000; z-index: 100;
         }
-        .nav-item { background: none; border: none; font-weight: 900; color: #888; cursor: pointer; font-size: 14px; }
-        .nav-item.active { color: #000; text-decoration: underline; text-underline-offset: 4px; }
+        .nav-item { background: none; border: none; font-weight: 900; color: #aaa; cursor: pointer; font-size: 16px; }
+        .nav-item.active { color: #000; text-decoration: underline; text-underline-offset: 6px; }
 
-        .record-list { margin-top: 20px; border-top: 2px dashed #000; padding-top: 15px; }
-        .record-item {
-            background: #fff; border: var(--border-style); border-radius: 8px;
-            padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-weight: bold;
-        }
-        .btn-del { color: #ff0000; border: 1.5px solid #000; background: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 900; cursor: pointer; font-size: 12px; }
+        .setting-section { border-bottom: 2px dashed #000; padding: 20px 0; text-align: left; }
+        .setting-section:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
 
+    <!-- 第一頁：時數紀錄 -->
     <div id="page-work" class="page active">
         <div class="container">
-            <h2>🕒 WORK HOURS</h2>
+            <h2>💼 WORK LOG</h2>
             
             <div class="input-group">
-                <label>🎯 TARGET GOAL (hr)</label>
+                <label>🎯 目標時數 (GOAL)</label>
                 <input type="number" id="goalInput" value="38" oninput="saveToStorage(); renderAll();">
             </div>
 
             <div class="input-group">
-                <label>💜 ADD HOURS</label>
-                <div style="display: flex; gap: 8px;">
-                    <input type="number" id="dailyHour" placeholder="H" style="flex:1">
-                    <input type="number" id="dailyMin" placeholder="M" style="flex:1">
+                <label>💜 新增今日時數</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="dailyHour" placeholder="時" style="flex:1">
+                    <input type="number" id="dailyMin" placeholder="分" style="flex:1">
                 </div>
             </div>
 
-            <button class="btn-main" onclick="addRecord()">SAVE RECORD 💾</button>
+            <button class="btn-main" onclick="addRecord()">儲存紀錄 SAVE 💾</button>
 
             <div class="stats-container">
                 <div class="stat-box highlight">
-                    <div style="font-size: 10px;">GAP</div>
-                    <span id="sessionGap">0</span> hr
+                    <div style="font-size: 11px;">剩餘 GAP</div>
+                    <span id="sessionGap" style="font-size: 20px;">0</span> hr
                 </div>
                 <div class="stat-box">
-                    <div style="font-size: 10px;">TOTAL</div>
-                    <span id="sessionTotal">0</span> hr
+                    <div style="font-size: 11px;">累計 TOTAL</div>
+                    <span id="sessionTotal" style="font-size: 20px;">0</span> hr
                 </div>
             </div>
 
@@ -123,32 +125,37 @@
             </div>
 
             <div id="calendarGrid" class="calendar-grid"></div>
-            <div id="dayDetail" class="record-list"></div>
+            <p style="font-size: 11px; margin-top: 10px; color: #666;">* 點擊日曆日期即可直接修改時數</p>
         </div>
     </div>
 
+    <!-- 第二頁：設定 -->
     <div id="page-config" class="page">
         <div class="container">
             <h2>⚙️ SETTINGS</h2>
-            <div class="input-group">
-                <label>📤 BACKUP DATA</label>
-                <button class="btn-main" onclick="exportData()">EXPORT .JSON</button>
+            
+            <div class="setting-section">
+                <label>📤 備份資料 (Export)</label>
+                <button class="btn-main" onclick="exportData()">匯出 .JSON 檔案</button>
             </div>
-            <div class="input-group">
-                <label>📥 RESTORE DATA</label>
-                <button class="btn-main" onclick="document.getElementById('importFile').click()">IMPORT .JSON</button>
+
+            <div class="setting-section">
+                <label>📥 還原資料 (Import)</label>
+                <button class="btn-main" onclick="document.getElementById('importFile').click()">選擇檔案並匯入</button>
                 <input type="file" id="importFile" style="display:none" onchange="importData(event)">
             </div>
-            <div class="input-group" style="margin-top:20px;">
-                <label>🏁 RESET SESSION</label>
-                <button class="btn-main" style="background:#ff7675;" onclick="settleAndReset()">SETTLE & CLEAR TOTAL</button>
+
+            <div class="setting-section">
+                <label>🏁 週期結算</label>
+                <button class="btn-main" style="background:#ffda79;" onclick="settleAndReset()">完成結算 (統計歸零)</button>
             </div>
         </div>
     </div>
 
+    <!-- 底部導覽 -->
     <div class="bottom-nav">
         <button id="nav-work" class="nav-item active" onclick="showPage('work')">LOGS</button>
-        <button id="nav-config" class="nav-item" onclick="showPage('config')">SETTINGS</button>
+        <button id="nav-config" class="nav-item" onclick="showPage('config')">CONFIG</button>
     </div>
 
 <script>
@@ -168,7 +175,8 @@
         const now = new Date();
         for (let i = 0; i < 12; i++) {
             const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            select.add(new Option(`${d.getFullYear()} / ${d.getMonth() + 1}`, `${d.getFullYear()}-${d.getMonth() + 1}`));
+            const val = `${d.getFullYear()}-${d.getMonth() + 1}`;
+            select.add(new Option(`${d.getFullYear()} 年 ${d.getMonth() + 1} 月`, val));
         }
     }
 
@@ -177,58 +185,44 @@
         const min = parseFloat(document.getElementById('dailyMin').value) || 0;
         const total = h + (min / 60);
         if (total <= 0) return;
-        records.unshift({ id: Date.now(), year: new Date().getFullYear(), month: new Date().getMonth()+1, day: new Date().getDate(), hours: total });
+        records.unshift({ 
+            id: Date.now(), 
+            year: new Date().getFullYear(), 
+            month: new Date().getMonth()+1, 
+            day: new Date().getDate(), 
+            hours: total 
+        });
         saveToStorage();
         document.getElementById('dailyHour').value = "";
         document.getElementById('dailyMin').value = "";
         renderAll();
     }
 
-    // --- 關鍵修正：點擊日曆格子的邏輯 ---
-    function handleCellClick(year, month, day) {
+    // 修改邏輯：點擊直接修改
+    function modifyDay(year, month, day) {
         const dayRecords = records.filter(r => r.year === year && r.month === month && r.day === day);
         
         if (dayRecords.length > 0) {
-            // 如果只有一筆紀錄，直接修改
-            if (dayRecords.length === 1) {
-                const newVal = prompt(`修改 ${month}/${day} 的時數：`, dayRecords[0].hours.toFixed(1));
-                if (newVal !== null && !isNaN(newVal) && newVal !== "") {
-                    dayRecords[0].hours = parseFloat(newVal);
-                    saveToStorage();
-                    renderAll();
-                }
-            } else {
-                // 如果有多筆紀錄，捲動到下方列表讓使用者選
-                alert(`當天有多筆紀錄，請從下方清單點擊文字進行修改。`);
-                showDayDetail(year, month, day);
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            // 取該天所有紀錄的總和作為預設值
+            const currentTotal = dayRecords.reduce((s, r) => s + r.hours, 0);
+            const newVal = prompt(`修改 ${month}/${day} 的總工時：`, currentTotal.toFixed(1));
+            
+            if (newVal !== null && !isNaN(newVal) && newVal !== "") {
+                // 修改做法：保留原本的第一筆 ID，更新時數，並刪除該天其他多餘筆數 (整合成一筆)
+                const mainRecord = dayRecords[0];
+                mainRecord.hours = parseFloat(newVal);
+                records = records.filter(r => !(r.year === year && r.month === month && r.day === day && r.id !== mainRecord.id));
+                saveToStorage();
+                renderAll();
             }
         } else {
-            // 空白日期，直接補記
-            const val = prompt(`補記 ${month}/${day} 的時數：`);
+            // 空白日期則新增
+            const val = prompt(`補記 ${month}/${day} 的工時：`);
             if(val !== null && !isNaN(val) && val !== "") {
                 records.unshift({ id: Date.now(), year, month, day, hours: parseFloat(val) });
                 saveToStorage();
                 renderAll();
             }
-        }
-    }
-
-    function deleteRecord(id) {
-        if(confirm("確定刪除？")) {
-            records = records.filter(r => r.id !== id);
-            saveToStorage();
-            renderAll();
-        }
-    }
-
-    function editRecord(id) {
-        const record = records.find(r => r.id === id);
-        const newVal = prompt(`修改時數：`, record.hours.toFixed(1));
-        if (newVal !== null && !isNaN(newVal) && newVal !== "") {
-            record.hours = parseFloat(newVal);
-            saveToStorage();
-            renderAll();
         }
     }
 
@@ -239,7 +233,8 @@
 
     function renderAll() {
         const goal = parseFloat(document.getElementById('goalInput').value) || 38;
-        const [year, month] = document.getElementById('monthFilter').value.split('-').map(Number);
+        const filterVal = document.getElementById('monthFilter').value || `${new Date().getFullYear()}-${new Date().getMonth() + 1}`;
+        const [year, month] = filterVal.split('-').map(Number);
         
         let sessionTotal = 0;
         records.forEach(r => { if (r.id >= lastSettleTime) sessionTotal += r.hours; });
@@ -248,7 +243,7 @@
 
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = "";
-        ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(w => {
+        ['日', '一', '二', '三', '四', '五', '六'].forEach(w => {
             const h = document.createElement('div'); h.className = 'calendar-day-head'; h.innerText = w;
             grid.appendChild(h);
         });
@@ -266,53 +261,43 @@
                 cell.innerHTML = `<span>${i}</span><div class="work-label">${sum.toFixed(1)}h</div>`;
             } else { cell.innerHTML = `<span>${i}</span>`; }
             
-            cell.onclick = () => {
-                handleCellClick(year, month, i);
-                showDayDetail(year, month, i);
-            };
+            cell.onclick = () => modifyDay(year, month, i);
             grid.appendChild(cell);
         }
     }
 
-    function showDayDetail(y, m, d) {
-        const dayRecords = records.filter(r => r.year === y && r.month === m && r.day === d);
-        const detailDiv = document.getElementById('dayDetail');
-        if (dayRecords.length === 0) { detailDiv.innerHTML = ""; return; }
-        
-        detailDiv.innerHTML = `<div style="font-weight:900; margin-bottom:10px;">📍 ${m}/${d} DETAILS:</div>`;
-        dayRecords.forEach(r => {
-            const item = document.createElement('div');
-            item.className = 'record-item';
-            item.innerHTML = `
-                <span onclick="editRecord(${r.id})">🕒 ${r.hours.toFixed(1)} hrs (Tap to edit)</span>
-                <button class="btn-del" onclick="deleteRecord(${r.id})">DEL</button>
-            `;
-            detailDiv.appendChild(item);
-        });
-    }
-
-    // 結算、匯出匯入功能保持不變...
     function settleAndReset() {
-        if (confirm("結算將使本期累計歸零，確定嗎？")) {
+        if (confirm("確定完成結算？本期累計將歸零，但歷史紀錄會保留。")) {
             lastSettleTime = Date.now();
             localStorage.setItem('lastSettleTime', lastSettleTime);
             renderAll();
         }
     }
+
     function exportData() {
         const data = { records, lastSettleTime, goal: document.getElementById('goalInput').value };
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = `WORK_BACKUP_${new Date().toISOString().slice(0,10)}.json`; a.click();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `WorkBackup_${new Date().toLocaleDateString()}.json`;
+        a.click();
     }
+
     function importData(e) {
-        const file = e.target.files[0]; if (!file) return;
+        const file = e.target.files[0];
+        if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => {
-            const data = JSON.parse(ev.target.result);
-            records = data.records || []; lastSettleTime = data.lastSettleTime || 0;
-            document.getElementById('goalInput').value = data.goal || 38;
-            saveToStorage(); renderAll(); alert("Restored!");
+        reader.onload = (event) => {
+            try {
+                const data = JSON.parse(event.target.result);
+                records = data.records || [];
+                lastSettleTime = data.lastSettleTime || 0;
+                document.getElementById('goalInput').value = data.goal || 38;
+                saveToStorage();
+                localStorage.setItem('lastSettleTime', lastSettleTime);
+                alert("還原成功！");
+                showPage('work');
+            } catch(e) { alert("檔案格式錯誤"); }
         };
         reader.readAsText(file);
     }
