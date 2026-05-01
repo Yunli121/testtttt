@@ -82,14 +82,8 @@
             border-radius: 10px; font-size: 13px; color: #4a148c; cursor: pointer; margin-bottom: 20px; font-family: inherit; font-weight: 500;
         }
 
-        /* 小提醒文字樣式 */
         .hint-text {
-            font-size: 13px;
-            color: #7b1fa2;
-            margin: 10px 0;
-            text-align: left;
-            font-weight: 500;
-            display: block;
+            font-size: 13px; color: #7b1fa2; margin: 10px 0; text-align: left; font-weight: 500; display: block;
         }
 
         .calendar-grid {
@@ -159,11 +153,8 @@
             <button class="btn-settle" onclick="settleAndReset()">🏁 完成本期結算</button>
             
             <div class="input-group">
-                <label>🔍 歷史查詢</label>
-                <div style="display: flex; gap: 8px; margin-top: 5px;">
-                    <select id="yearSelect" onchange="renderAll()"></select>
-                    <select id="monthSelect" onchange="renderAll()"></select>
-                </div>
+                <label>🔍 歷史回顧</label>
+                <select id="monthFilter" onchange="renderAll()"></select>
             </div>
 
             <span class="hint-text">💡 點擊日期可「補記」或「修改」</span>
@@ -206,13 +197,15 @@
     }
 
     function init() {
-        const ySelect = document.getElementById('yearSelect');
-        const mSelect = document.getElementById('monthSelect');
+        const select = document.getElementById('monthFilter');
         const now = new Date();
-        for (let y = 2025; y <= 2027; y++) ySelect.add(new Option(`${y} 年`, y));
-        for (let i = 1; i <= 12; i++) mSelect.add(new Option(`${i} 月`, i));
-        ySelect.value = now.getFullYear();
-        mSelect.value = now.getMonth() + 1;
+        // 生成最近六個月的選項
+        for (let i = 0; i < 6; i++) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const val = `${d.getFullYear()}-${d.getMonth() + 1}`;
+            const text = `${d.getFullYear()}年 ${d.getMonth() + 1}月`;
+            select.add(new Option(text, val));
+        }
         document.getElementById('goalInput').value = savedGoal;
         renderAll();
     }
@@ -223,17 +216,22 @@
         const total = h + (min / 60);
         if (total <= 0) return;
         const now = new Date();
-        records.unshift({ id: Date.now(), year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(), hours: total });
-        saveToStorage();
+        saveToRecords(now.getFullYear(), now.getMonth() + 1, now.getDate(), total);
         document.getElementById('dailyHour').value = "";
         document.getElementById('dailyMin').value = "";
+    }
+
+    function saveToRecords(y, m, d, hours) {
+        records.unshift({ id: Date.now(), year: y, month: m, day: d, hours: hours });
+        saveToStorage();
         renderAll();
     }
 
     function renderAll() {
         const goal = parseFloat(document.getElementById('goalInput').value) || 0;
-        const year = parseInt(document.getElementById('yearSelect').value);
-        const month = parseInt(document.getElementById('monthSelect').value);
+        const filterVal = document.getElementById('monthFilter').value;
+        if (!filterVal) return;
+        const [year, month] = filterVal.split('-').map(Number);
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = "";
 
@@ -268,10 +266,7 @@
         const newVal = prompt(`修改 [ ${m}/${d} ] 時數：\n(輸入 0 可以刪除當日紀錄)`, currentVal);
         
         if (newVal !== null && !isNaN(newVal)) {
-            // 先過濾掉當天所有紀錄
             records = records.filter(r => !(r.year === y && r.month === m && r.day === d));
-            
-            // 如果輸入大於 0 則新增一筆新的，如果輸入 0 則不新增（等同於刪除）
             if (parseFloat(newVal) > 0) {
                 records.unshift({ id: Date.now(), year: y, month: m, day: d, hours: parseFloat(newVal) });
             }
