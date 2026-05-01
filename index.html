@@ -2,222 +2,308 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>👣 旅遊行程書 👣</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💼 工作時數管理</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #E0F2FE; color: #1A1A1A; }
-        .neo-brutal { border: 4px solid #000; box-shadow: 6px 6px 0px #000; transition: all 0.1s; cursor: pointer; background-color: white; }
-        .neo-brutal:active { box-shadow: 0px 0px 0px #000; transform: translate(4px, 4px); }
-        .page { display: none; padding-bottom: 120px; animation: fadeIn 0.2s ease-out; }
-        .page-active { display: block; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .delete-btn { border: 2px solid #000; background: #FF4B4B; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1f5fe 100%);
+            --accent-color: #e1bee7; 
+            --warning-color: #fffde7; 
+            --border-style: 2.2px solid #4a148c;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary-text: #4a148c;
+            --shadow: 8px 8px 0px #4a148c;
+        }
+
+        body {
+            font-family: -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 導覽列 */
+        nav {
+            display: flex;
+            background: #fff;
+            border: var(--border-style);
+            margin-top: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 4px 4px 0px #4a148c;
+        }
+
+        nav button {
+            padding: 10px 25px;
+            border: none;
+            background: white;
+            font-weight: bold;
+            color: var(--primary-text);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        nav button.active {
+            background: var(--accent-color);
+        }
+
+        /* 頁面容器 */
+        .page {
+            display: none;
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 25px;
+            border: var(--border-style);
+            box-shadow: var(--shadow);
+            border-radius: 24px;
+        }
+
+        h2 { margin: 0 0 15px 0; text-align: center; color: var(--primary-text); }
+        
+        /* 輸入與統計 */
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px; color: #6a1b9a; }
+        input, select {
+            width: 100%; padding: 12px; box-sizing: border-box; border: var(--border-style);
+            border-radius: 12px; font-size: 16px; outline: none; background: #fff;
+        }
+
+        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .stat-box { background: var(--accent-color); border: var(--border-style); padding: 10px; border-radius: 15px; text-align: center; font-weight: bold; }
+        .stat-box.highlight { background: var(--warning-color); }
+
+        .btn-main {
+            width: 100%; padding: 14px; background-color: #ffffff; border: var(--border-style);
+            border-radius: 12px; font-weight: bold; font-size: 16px; color: var(--primary-text);
+            cursor: pointer; box-shadow: 4px 4px 0px #4a148c; margin-bottom: 15px;
+        }
+
+        .btn-main:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #4a148c; }
+
+        /* 日曆 */
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #fff;
+            padding: 10px; border: var(--border-style); border-radius: 15px;
+        }
+        .calendar-day-head { font-size: 10px; font-weight: bold; text-align: center; color: #7b1fa2; }
+        .calendar-cell {
+            aspect-ratio: 1 / 1.3; border: 1px solid #eee; border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; padding-top: 4px; font-size: 12px; cursor: pointer;
+        }
+        .calendar-cell.has-data { background-color: #f3e5f5; border-color: var(--primary-text); }
+        .work-label { background: #4a148c; color: white; font-size: 9px; padding: 1px 3px; border-radius: 4px; margin-top: 4px; }
+
+        /* 設定頁面特定樣式 */
+        .setting-item {
+            border-bottom: 1.5px dashed #4a148c; padding: 15px 0;
+        }
+        .setting-item:last-child { border-bottom: none; }
+        .btn-setting {
+            width: 100%; padding: 10px; margin-top: 8px; background: #fff; border: 1.5px solid #4a148c;
+            border-radius: 10px; cursor: pointer; font-weight: bold;
+        }
     </style>
 </head>
-<body class="p-4">
+<body>
 
-    <div id="page-home" class="page page-active">
-        <header class="mb-6">
-            <h1 class="text-4xl font-black italic">PANGUI! 🐶</h1>
-            <p class="font-bold text-blue-600">下一站：日本東京 🇯🇵</p>
-        </header>
-        
-        <div class="grid grid-cols-2 gap-4">
-            <div onclick="showPage('page-itinerary')" class="col-span-2 neo-brutal p-6 relative h-40 overflow-hidden">
-                <span class="absolute right-[-10px] bottom-[-10px] text-8xl opacity-10">🗾</span>
-                <h2 class="text-2xl font-black">查看行程表</h2>
-                <div class="mt-2 text-orange-600 font-bold italic">GO! GO! ></div>
+    <nav>
+        <button id="btn-work" class="active" onclick="showPage('work')">🕒 時數紀錄</button>
+        <button id="btn-config" onclick="showPage('config')">⚙️ 設定備份</button>
+    </nav>
+
+    <!-- 第一頁：工作時數 -->
+    <div id="page-work" class="page active">
+        <div class="container">
+            <h2>時數管理</h2>
+            
+            <div class="input-group">
+                <label>💜 今日時數</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="number" id="dailyHour" placeholder="時" style="flex:1">
+                    <input type="number" id="dailyMin" placeholder="分" style="flex:1">
+                </div>
             </div>
-            <div onclick="showPage('page-calc')" class="neo-brutal bg-orange-400 p-4 text-center">
-                <span class="text-3xl">💴</span><p class="font-black mt-1">匯率記帳</p>
+
+            <button class="btn-main" onclick="addRecord()">💾 儲存今日紀錄</button>
+
+            <div class="stats-container">
+                <div class="stat-box highlight">
+                    <span style="font-size: 12px;">本期剩餘</span><br>
+                    <span id="sessionGap">0</span> hr
+                </div>
+                <div class="stat-box">
+                    <span style="font-size: 12px;">本期累計</span><br>
+                    <span id="sessionTotal">0</span> hr
+                </div>
             </div>
-            <div onclick="showPage('page-list-luggage')" class="neo-brutal bg-green-300 p-4 text-center">
-                <span class="text-3xl">📦</span><p class="font-black mt-1">行李清單</p>
+
+            <div class="input-group">
+                <label>🔍 月份查看</label>
+                <select id="monthFilter" onchange="renderAll()"></select>
             </div>
-            <div onclick="showPage('page-list-gifts')" class="neo-brutal bg-purple-300 p-4 text-center">
-                <span class="text-3xl">🎁</span><p class="font-black mt-1">伴手禮</p>
+
+            <div id="calendarGrid" class="calendar-grid"></div>
+        </div>
+    </div>
+
+    <!-- 第二頁：設定 -->
+    <div id="page-config" class="page">
+        <div class="container">
+            <h2>系統設定</h2>
+
+            <div class="setting-item">
+                <label>🎯 本週期目標時數 (hr)</label>
+                <input type="number" id="goalInput" value="38" oninput="renderAll()">
             </div>
-            <div onclick="clearAllData()" class="neo-brutal bg-red-300 p-4 text-center">
-                <span class="text-3xl">🗑️</span><p class="font-black mt-1">重設資料</p>
+
+            <div class="setting-item">
+                <label>📤 資料備份</label>
+                <p style="font-size: 11px; color: #666;">將紀錄下載成檔案，避免清理瀏覽器後資料遺失。</p>
+                <button class="btn-setting" onclick="exportData()">點此匯出備份檔案 (.json)</button>
+            </div>
+
+            <div class="setting-item">
+                <label>📥 資料還原</label>
+                <p style="font-size: 11px; color: #666;">選擇之前備份的檔案來還原所有時數紀錄。</p>
+                <button class="btn-setting" onclick="document.getElementById('importFile').click()">點此選擇檔案並匯入</button>
+                <input type="file" id="importFile" style="display:none" onchange="importData(event)">
+            </div>
+
+            <div class="setting-item">
+                <label>🏁 週期結算</label>
+                <p style="font-size: 11px; color: #d63031;">領完薪水後按下，累計時數會重新歸零 (支援跨月)。</p>
+                <button class="btn-setting" style="border-color: #d63031; color: #d63031;" onclick="settleAndReset()">完成本期結算 (統計歸零)</button>
             </div>
         </div>
     </div>
 
-    <div id="page-itinerary" class="page">
-        <button onclick="showPage('page-home')" class="mb-4 font-black">← 返回首頁</button>
-        <h2 class="text-3xl font-black mb-4">旅遊時間軸 📍</h2>
-        
-        <div class="flex space-x-3 overflow-x-auto no-scrollbar mb-6 pb-2">
-            <button class="flex-none w-16 h-20 neo-brutal bg-orange-400 flex flex-col items-center justify-center font-black"><span>01</span><span>10</span></button>
-            <button class="flex-none w-16 h-20 neo-brutal bg-white flex flex-col items-center justify-center font-black"><span>01</span><span>11</span></button>
-            <button class="flex-none w-16 h-20 neo-brutal bg-white flex flex-col items-center justify-center font-black"><span>01</span><span>12</span></button>
-            <button class="flex-none w-16 h-20 neo-brutal bg-white flex flex-col items-center justify-center font-black"><span>01</span><span>13</span></button>
-            <button class="flex-none w-16 h-20 neo-brutal bg-white flex flex-col items-center justify-center font-black"><span>01</span><span>14</span></button>
-        </div>
+<script>
+    let records = JSON.parse(localStorage.getItem('workRecords')) || [];
+    let lastSettleTime = parseInt(localStorage.getItem('lastSettleTime')) || 0;
 
-        <div id="itinerary-list" class="space-y-6 border-l-4 border-black ml-4 pl-6 relative">
-            </div>
-    </div>
+    // 分頁切換
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('page-' + pageId).classList.add('active');
+        document.getElementById('btn-' + (pageId === 'work' ? 'work' : 'config')).classList.add('active');
+        renderAll();
+    }
 
-    <div id="page-calc" class="page">
-        <button onclick="showPage('page-home')" class="mb-4 font-black">← 返回</button>
-        <div class="neo-brutal bg-black text-white p-6 mb-4">
-            <div class="text-4xl font-black text-orange-400">¥ <span id="jpy-val">0</span></div>
-            <div class="mt-2 text-2xl font-black text-white">NT$ <span id="twd-val">0</span></div>
-        </div>
-        <div class="grid grid-cols-3 gap-3 mb-6">
-            <button onclick="calc(1)" class="neo-brutal py-4 text-2xl font-black">1</button>
-            <button onclick="calc(2)" class="neo-brutal py-4 text-2xl font-black">2</button>
-            <button onclick="calc(3)" class="neo-brutal py-4 text-2xl font-black">3</button>
-            <button onclick="calc(4)" class="neo-brutal py-4 text-2xl font-black">4</button>
-            <button onclick="calc(5)" class="neo-brutal py-4 text-2xl font-black">5</button>
-            <button onclick="calc(6)" class="neo-brutal py-4 text-2xl font-black">6</button>
-            <button onclick="calc(7)" class="neo-brutal py-4 text-2xl font-black">7</button>
-            <button onclick="calc(8)" class="neo-brutal py-4 text-2xl font-black">8</button>
-            <button onclick="calc(9)" class="neo-brutal py-4 text-2xl font-black">9</button>
-            <button onclick="calc('C')" class="neo-brutal bg-red-400 py-4 text-2xl font-black">C</button>
-            <button onclick="calc(0)" class="neo-brutal py-4 text-2xl font-black">0</button>
-            <button onclick="saveExpense()" class="neo-brutal bg-orange-400 py-4 text-xl font-black">SAVE</button>
-        </div>
-        <h3 class="font-black mb-2 italic underline">EXPENSE HISTORY</h3>
-        <div id="expense-history" class="space-y-2"></div>
-    </div>
+    // 初始化月份
+    function initMonthFilter() {
+        const select = document.getElementById('monthFilter');
+        const now = new Date();
+        for (let i = 0; i < 12; i++) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const val = `${d.getFullYear()}-${d.getMonth() + 1}`;
+            select.add(new Option(`${d.getFullYear()}年 ${d.getMonth() + 1}月`, val));
+        }
+    }
 
-    <div id="page-list-luggage" class="page">
-        <button onclick="showPage('page-home')" class="mb-4 font-black">← 返回</button>
-        <h2 class="text-3xl font-black mb-6">行李檢查 🎒</h2>
-        <div id="luggage-list" class="space-y-3"></div>
-    </div>
+    // 核心功能：新增紀錄
+    function addRecord() {
+        const h = parseFloat(document.getElementById('dailyHour').value) || 0;
+        const min = parseFloat(document.getElementById('dailyMin').value) || 0;
+        const total = h + (min / 60);
+        if (total <= 0) return;
+        const now = new Date();
+        records.unshift({ id: Date.now(), year: now.getFullYear(), month: now.getMonth()+1, day: now.getDate(), hours: total });
+        saveToStorage();
+        document.getElementById('dailyHour').value = "";
+        document.getElementById('dailyMin').value = "";
+        renderAll();
+    }
 
-    <div id="page-list-gifts" class="page">
-        <button onclick="showPage('page-home')" class="mb-4 font-black">← 返回</button>
-        <h2 class="text-3xl font-black mb-6">伴手禮清單 🎁</h2>
-        <div id="gifts-list" class="space-y-3"></div>
-    </div>
-
-    <div class="fixed bottom-6 left-0 right-0 px-8 flex justify-center">
-        <button onclick="handleGlobalAdd()" class="w-full max-w-sm neo-brutal bg-orange-400 py-4 text-xl font-black shadow-[8px_8px_0px_#000]">
-            ＋ 新增紀錄
-        </button>
-    </div>
-
-    <script>
-        // --- 資料管理 ---
-        let db = JSON.parse(localStorage.getItem('travel_v2')) || {
-            itinerary: [{time: "09:00", title: "抵達機場 ✈️"}],
-            expenses: [],
-            luggage: [{text: "護照", checked: false}],
-            gifts: [{text: "薯條三兄弟", checked: false}]
-        };
-
-        function saveDB() {
-            localStorage.setItem('travel_v2', JSON.stringify(db));
+    // 結算
+    function settleAndReset() {
+        if (confirm("結算後週期統計會歸零，但月曆紀錄會保留，確定嗎？")) {
+            lastSettleTime = Date.now();
+            localStorage.setItem('lastSettleTime', lastSettleTime);
             renderAll();
         }
+    }
 
-        function deleteItem(type, index) {
-            if (confirm("要刪除這個項目嗎？")) {
-                db[type].splice(index, 1);
-                saveDB();
-            }
+    // 匯出
+    function exportData() {
+        const data = { records, lastSettleTime, goal: document.getElementById('goalInput').value };
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `時數備份_${new Date().toLocaleDateString()}.json`;
+        a.click();
+    }
+
+    // 匯入
+    function importData(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const data = JSON.parse(event.target.result);
+            records = data.records || [];
+            lastSettleTime = data.lastSettleTime || 0;
+            document.getElementById('goalInput').value = data.goal || 38;
+            saveToStorage();
+            localStorage.setItem('lastSettleTime', lastSettleTime);
+            alert("匯入成功！");
+            showPage('work');
+        };
+        reader.readAsText(file);
+    }
+
+    function saveToStorage() {
+        localStorage.setItem('workRecords', JSON.stringify(records));
+        localStorage.setItem('workGoal', document.getElementById('goalInput').value);
+    }
+
+    function renderAll() {
+        const goal = parseFloat(document.getElementById('goalInput').value) || 38;
+        const [year, month] = document.getElementById('monthFilter').value.split('-').map(Number);
+        
+        let sessionTotal = 0;
+        records.forEach(r => { if (r.id >= lastSettleTime) sessionTotal += r.hours; });
+        document.getElementById('sessionTotal').innerText = sessionTotal.toFixed(1);
+        document.getElementById('sessionGap').innerText = Math.max(0, goal - sessionTotal).toFixed(1);
+
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = "";
+        ['日', '一', '二', '三', '四', '五', '六'].forEach(w => {
+            const h = document.createElement('div'); h.className = 'calendar-day-head'; h.innerText = w;
+            grid.appendChild(h);
+        });
+
+        const firstDay = new Date(year, month - 1, 1).getDay();
+        const daysInMonth = new Date(year, month, 0).getDate();
+        for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
+        for (let i = 1; i <= daysInMonth; i++) {
+            const cell = document.createElement('div'); cell.className = 'calendar-cell';
+            const dayRecords = records.filter(r => r.year === year && r.month === month && r.day === i);
+            if (dayRecords.length > 0) {
+                cell.classList.add('has-data');
+                const sum = dayRecords.reduce((s, r) => s + r.hours, 0);
+                cell.innerHTML = `<span>${i}</span><div class="work-label">${sum.toFixed(1)}h</div>`;
+            } else { cell.innerHTML = `<span>${i}</span>`; }
+            grid.appendChild(cell);
         }
+    }
 
-        // --- 路由 ---
-        let currentPage = 'page-home';
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
-            document.getElementById(pageId).classList.add('page-active');
-            currentPage = pageId;
-            window.scrollTo(0,0);
-        }
-
-        // --- 功能實作 ---
-        function handleGlobalAdd() {
-            if (currentPage === 'page-itinerary' || currentPage === 'page-home') {
-                const time = prompt("時間:", "12:00");
-                const title = prompt("行程內容:");
-                if (title) { db.itinerary.push({time, title}); saveDB(); showPage('page-itinerary'); }
-            } else if (currentPage === 'page-list-luggage') {
-                const text = prompt("新增物品:");
-                if (text) { db.luggage.push({text, checked: false}); saveDB(); }
-            } else if (currentPage === 'page-list-gifts') {
-                const text = prompt("新增想買的伴手禮:");
-                if (text) { db.gifts.push({text, checked: false}); saveDB(); }
-            }
-        }
-
-        let jpy = "0";
-        function calc(val) {
-            if (val === 'C') jpy = "0";
-            else if (jpy === "0") jpy = val.toString();
-            else jpy += val.toString();
-            document.getElementById('jpy-val').innerText = jpy;
-            document.getElementById('twd-val').innerText = Math.round(parseInt(jpy) * 0.21);
-        }
-
-        function saveExpense() {
-            if (jpy === "0") return;
-            const note = prompt("這筆錢花在哪？", "午餐");
-            if (note) {
-                db.expenses.unshift({note, jpy: jpy, twd: Math.round(parseInt(jpy) * 0.21)});
-                jpy = "0"; calc('C'); saveDB();
-            }
-        }
-
-        function toggleCheck(type, index) {
-            db[type][index].checked = !db[type][index].checked;
-            saveDB();
-        }
-
-        // --- 渲染渲染 ---
-        function renderAll() {
-            // 行程
-            document.getElementById('itinerary-list').innerHTML = db.itinerary.map((i, idx) => `
-                <div class="neo-brutal p-4 relative mb-4 group">
-                    <div class="absolute -left-[38px] top-4 w-6 h-6 rounded-full bg-orange-400 border-4 border-black"></div>
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-sm font-black text-orange-600">${i.time}</span>
-                            <h4 class="font-black text-lg">${i.title}</h4>
-                        </div>
-                        <button onclick="deleteItem('itinerary', ${idx})" class="delete-btn">×</button>
-                    </div>
-                </div>
-            `).join('');
-
-            // 記帳歷史
-            document.getElementById('expense-history').innerHTML = db.expenses.map((e, idx) => `
-                <div class="flex justify-between items-center p-3 bg-white border-2 border-black font-bold mb-2">
-                    <span class="flex-1">🍱 ${e.note}</span>
-                    <span class="mr-4 text-sm italic text-gray-500">¥${e.jpy}</span>
-                    <span class="font-black text-orange-600">NT$${e.twd}</span>
-                    <button onclick="deleteItem('expenses', ${idx})" class="ml-2 delete-btn">×</button>
-                </div>
-            `).join('');
-
-            // 清單
-            renderList('luggage-list', 'luggage', db.luggage);
-            renderList('gifts-list', 'gifts', db.gifts);
-        }
-
-        function renderList(targetId, type, data) {
-            document.getElementById(targetId).innerHTML = data.map((item, idx) => `
-                <div class="neo-brutal p-4 flex justify-between items-center font-black ${item.checked ? 'bg-green-100' : ''}">
-                    <div class="flex items-center flex-1" onclick="toggleCheck('${type}', ${idx})">
-                        <div class="w-6 h-6 border-4 border-black mr-3 ${item.checked ? 'bg-black' : 'bg-white'}"></div>
-                        <span class="${item.checked ? 'line-through text-gray-500' : ''}">${item.text}</span>
-                    </div>
-                    <button onclick="deleteItem('${type}', ${idx})" class="delete-btn">×</button>
-                </div>
-            `).join('');
-        }
-
-        function clearAllData() { if(confirm("確定重設？")) { localStorage.clear(); location.reload(); } }
-
-        renderAll();
-    </script>
+    initMonthFilter();
+    if(localStorage.getItem('workGoal')) document.getElementById('goalInput').value = localStorage.getItem('workGoal');
+    renderAll();
+</script>
 </body>
 </html>
