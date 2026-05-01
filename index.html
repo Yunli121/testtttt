@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>💼 工作時數管理</title>
     <style>
         :root {
@@ -20,7 +20,7 @@
             background: var(--bg-gradient);
             background-attachment: fixed;
             margin: 0;
-            padding-bottom: 100px; /* 為底部導航留空間 */
+            padding-bottom: 80px; /* 預留底部導航空間 */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -90,15 +90,41 @@
             border-radius: 4px; margin-top: 4px; max-width: 90%;
         }
 
-        /* 底部導覽 */
+        /* 修正後的底部導覽：固定在最下方，不懸浮 */
         .bottom-nav {
-            position: fixed; bottom: 25px; width: 90%; max-width: 400px;
-            background: #fff; border: var(--border-style); border-radius: 50px;
-            display: flex; justify-content: space-around; padding: 15px 0;
-            box-shadow: 8px 8px 0px #4a148c; z-index: 100;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: #fff;
+            border-top: var(--border-style);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom); /* 適應 iPhone 底部槓槓 */
         }
-        .nav-item { background: none; border: none; font-weight: 900; color: #aaa; cursor: pointer; font-size: 16px; }
-        .nav-item.active { color: #4a148c; text-decoration: underline; text-underline-offset: 6px; }
+        .nav-item { 
+            flex: 1;
+            height: 100%;
+            background: none; 
+            border: none; 
+            font-weight: 900; 
+            color: #aaa; 
+            cursor: pointer; 
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .nav-item.active { 
+            color: #4a148c; 
+            background: #f3e5f5; /* 點擊後的頁籤背景色 */
+            text-decoration: underline; 
+            text-underline-offset: 6px; 
+        }
 
         .setting-section { border-bottom: 2px dashed #4a148c; padding: 20px 0; text-align: left; }
         .setting-section:last-child { border-bottom: none; }
@@ -165,7 +191,7 @@
         </div>
     </div>
 
-    <!-- 底部導覽 -->
+    <!-- 底部導覽：固定定位 -->
     <div class="bottom-nav">
         <button id="nav-work" class="nav-item active" onclick="showPage('work')">LOGS</button>
         <button id="nav-config" class="nav-item" onclick="showPage('config')">CONFIG</button>
@@ -180,6 +206,7 @@
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById('page-' + pageId).classList.add('active');
         document.getElementById('nav-' + pageId).classList.add('active');
+        window.scrollTo(0, 0); // 切換頁面時回到頂部
         renderAll();
     }
 
