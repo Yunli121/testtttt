@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>💼 工作時數管理</title>
-    <!-- 導入 Google Fonts 與 Font Awesome 圖示 -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 導入 Google Fonts: Montserrat 用於數字與標題, Noto Sans TC 用於中文 -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -20,7 +19,8 @@
         }
 
         body {
-            font-family: 'Quicksand', -apple-system, sans-serif;
+            /* 設定字體順序：英文 Montserrat -> 中文 Noto Sans TC */
+            font-family: 'Montserrat', 'Noto Sans TC', -apple-system, sans-serif;
             background: var(--bg-gradient);
             background-attachment: fixed;
             margin: 0;
@@ -29,6 +29,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
         .page { display: none; width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
@@ -44,16 +45,22 @@
             text-align: center;
         }
 
-        h2 { margin: 0 0 15px 0; color: var(--primary-text); font-size: 22px; font-weight: 900; }
+        h2 { 
+            margin: 0 0 15px 0; 
+            color: var(--primary-text); 
+            font-size: 24px; 
+            font-weight: 900; 
+            letter-spacing: -0.5px;
+        }
 
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; color: #6a1b9a; }
-        label i { margin-right: 5px; color: #4a148c; }
+        .input-group { margin-bottom: 12px; text-align: left; }
+        label { display: block; font-weight: 900; margin-bottom: 5px; font-size: 14px; color: #6a1b9a; }
 
         input, select {
             width: 100%; padding: 12px; box-sizing: border-box; border: var(--border-style);
-            border-radius: 14px; font-size: 16px; outline: none; background: #fff; 
-            font-weight: 700; font-family: 'Quicksand', sans-serif;
+            border-radius: 12px; font-size: 16px; outline: none; background: #fff; 
+            font-weight: 700;
+            font-family: inherit; /* 繼承主字體 */
         }
 
         .filter-row { display: flex; gap: 8px; margin-top: 5px; }
@@ -61,62 +68,71 @@
 
         .progress-section {
             background: rgba(255, 255, 255, 0.5); border: var(--border-style);
-            border-radius: 20px; padding: 15px; margin-bottom: 15px;
+            border-radius: 20px; padding: 12px; margin-bottom: 12px;
         }
 
         .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-        .stat-box { background: var(--accent-color); border: var(--border-style); padding: 10px; border-radius: 15px; font-weight: 700; }
+        .stat-box { 
+            background: var(--accent-color); 
+            border: var(--border-style); 
+            padding: 12px 10px; 
+            border-radius: 15px; 
+            font-weight: 900;
+        }
+        .stat-box .num {
+            font-size: 24px;
+            display: inline-block;
+            margin-bottom: 2px;
+        }
         .stat-box.highlight { background: var(--warning-color); }
 
         .btn-main {
-            width: 100%; padding: 14px; background-color: #ffffff; border: var(--border-style);
-            border-radius: 12px; font-weight: 900; font-size: 16px; color: var(--primary-text);
-            cursor: pointer; box-shadow: 5px 5px 0px #4a148c; margin-bottom: 15px;
-            font-family: 'Quicksand', sans-serif;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 16px; background-color: #ffffff; border: var(--border-style);
+            border-radius: 12px; font-weight: 900; font-size: 17px; color: var(--primary-text);
+            cursor: pointer; box-shadow: 5px 5px 0px #4a148c; margin-bottom: 12px;
+            font-family: inherit;
+            letter-spacing: 1px;
         }
         .btn-main:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #4a148c; }
 
         .btn-settle {
             width: 100%; padding: 10px; background-color: #f3e5f5; border: 1.5px dashed #4a148c;
-            border-radius: 10px; font-size: 13px; color: #4a148c; cursor: pointer; 
-            margin-bottom: 25px; font-weight: 700; font-family: 'Quicksand', sans-serif;
+            border-radius: 10px; font-size: 13px; color: #4a148c; cursor: pointer; margin-bottom: 20px; 
+            font-weight: 900; font-family: inherit;
         }
 
         .calendar-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; background: #fff;
-            padding: 10px; border: var(--border-style); border-radius: 18px;
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #fff;
+            padding: 10px; border: var(--border-style); border-radius: 15px;
         }
-        .calendar-day-head { font-size: 11px; font-weight: 700; color: #7b1fa2; padding-bottom: 5px; }
+        .calendar-day-head { font-size: 12px; font-weight: 900; color: #7b1fa2; padding-bottom: 5px; }
         .calendar-cell {
-            aspect-ratio: 1 / 1.3; border: 1px solid #eee; border-radius: 10px;
-            display: flex; flex-direction: column; align-items: center; padding-top: 5px;
-            font-size: 12px; cursor: pointer; transition: all 0.2s;
+            aspect-ratio: 1 / 1.3; border: 1px solid #eee; border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; padding-top: 4px;
+            font-size: 13px; cursor: pointer; transition: all 0.2s;
         }
         .calendar-cell.has-data { background-color: #f3e5f5; border: 1.5px solid #4a148c; }
-        .date-num { color: #999; font-weight: 500; }
-        .has-data .date-num { color: #4a148c; font-weight: 700; }
+        .date-num { color: #999; font-weight: 700; }
+        .has-data .date-num { color: #4a148c; font-weight: 900; }
 
         .work-label {
-            background: #4a148c; color: white; font-size: 9px; padding: 2px 4px;
-            border-radius: 5px; margin-top: 4px; max-width: 90%; font-weight: 700;
+            background: #4a148c; color: white; font-size: 10px; padding: 1px 4px;
+            border-radius: 4px; margin-top: 4px; max-width: 90%; font-weight: 700;
         }
 
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
             background: #fff; border-top: var(--border-style); display: flex;
             justify-content: space-around; align-items: center; z-index: 1000;
             padding-bottom: env(safe-area-inset-bottom);
         }
         .nav-item { 
-            flex: 1; height: 100%; background: none; border: none; font-weight: 700; 
-            color: #aaa; cursor: pointer; font-size: 15px; display: flex;
-            flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-            font-family: 'Quicksand', sans-serif;
+            flex: 1; height: 100%; background: none; border: none; font-weight: 900; 
+            color: #aaa; cursor: pointer; font-size: 16px; display: flex;
+            align-items: center; justify-content: center; transition: 0.2s;
+            font-family: inherit;
         }
-        .nav-item i { font-size: 20px; }
-        .nav-item.active { color: #4a148c; background: #f3e5f5; }
-        .nav-item.active span { text-decoration: underline; text-underline-offset: 4px; }
+        .nav-item.active { color: #4a148c; background: #f3e5f5; text-decoration: underline; text-underline-offset: 6px; }
 
         .setting-section { border-bottom: 2px dashed #4a148c; padding: 20px 0; text-align: left; }
         .setting-section:last-child { border-bottom: none; }
@@ -124,47 +140,42 @@
 </head>
 <body>
 
-    <!-- 第一頁：時數紀錄 -->
     <div id="page-work" class="page active">
         <div class="container">
-            <h2><i class="fa-solid fa-calendar-check"></i> 工作時數管理</h2>
+            <h2>📅 工作時數管理</h2>
             
             <div class="input-group">
-                <label><i class="fa-solid fa-bullseye"></i> 目標時數 (hr)</label>
+                <label>目標時數 (HR)</label>
                 <input type="number" id="goalInput" value="38" oninput="saveToStorage(); renderAll();">
             </div>
 
             <div class="input-group">
-                <label><i class="fa-solid fa-clock"></i> 今日時數</label>
+                <label>今日時數</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="number" id="dailyHour" placeholder="時" style="flex:1">
                     <input type="number" id="dailyMin" placeholder="分" style="flex:1">
                 </div>
             </div>
 
-            <button class="btn-main" onclick="addRecord()">
-                <i class="fa-solid fa-floppy-disk"></i> 儲存時數 SAVE
-            </button>
+            <button class="btn-main" onclick="addRecord()">💾 儲存時數 SAVE</button>
 
             <div class="progress-section">
                 <div class="stats-container">
                     <div class="stat-box highlight">
                         <span style="font-size: 13px;">目前剩餘 GAP</span><br>
-                        <span id="sessionGap" style="font-size: 20px;">0</span> hr
+                        <span id="sessionGap" class="num">0</span> <small>hr</small>
                     </div>
                     <div class="stat-box">
                         <span style="font-size: 13px;">目前累計 TOTAL</span><br>
-                        <span id="sessionTotal" style="font-size: 20px;">0</span> hr
+                        <span id="sessionTotal" class="num">0</span> <small>hr</small>
                     </div>
                 </div>
             </div>
 
-            <button class="btn-settle" onclick="settleAndReset()">
-                <i class="fa-solid fa-flag-checkered"></i> 完成本期結算 (統計歸零)
-            </button>
+            <button class="btn-settle" onclick="settleAndReset()">🏁 完成本期結算 (統計歸零)</button>
 
             <div class="input-group">
-                <label><i class="fa-solid fa-magnifying-glass"></i> 歷史回顧 (年/月)</label>
+                <label>🔍 歷史回顧 (年份 / 月份)</label>
                 <div class="filter-row">
                     <select id="yearSelect" onchange="renderAll()">
                         <option value="2026">2026 年</option>
@@ -178,164 +189,151 @@
         </div>
     </div>
 
-    <!-- 第二頁：設定 -->
     <div id="page-config" class="page">
         <div class="container">
-            <h2><i class="fa-solid fa-gear"></i> 備份與設定</h2>
+            <h2>⚙️ 備份與設定</h2>
             <div class="setting-section">
-                <label><i class="fa-solid fa-file-export"></i> 備份資料 (Export)</label>
-                <button class="btn-main" onclick="exportData()">
-                    <i class="fa-solid fa-download"></i> 匯出 .JSON 檔案
-                </button>
+                <label>備份資料 (EXPORT)</label>
+                <button class="btn-main" onclick="exportData()">匯出 .JSON 檔案</button>
             </div>
             <div class="setting-section">
-                <label><i class="fa-solid fa-file-import"></i> 還原資料 (Import)</label>
-                <button class="btn-main" onclick="document.getElementById('importFile').click()">
-                    <i class="fa-solid fa-upload"></i> 選擇檔案並匯入
-                </button>
+                <label>還原資料 (IMPORT)</label>
+                <button class="btn-main" onclick="document.getElementById('importFile').click()">選擇檔案並匯入</button>
                 <input type="file" id="importFile" style="display:none" onchange="importData(event)">
             </div>
         </div>
     </div>
 
-    <!-- 底部導覽 -->
     <div class="bottom-nav">
-        <button id="nav-work" class="nav-item active" onclick="showPage('work')">
-            <i class="fa-solid fa-briefcase"></i>
-            <span>💼 時數</span>
-        </button>
-        <button id="nav-config" class="nav-item" onclick="showPage('config')">
-            <i class="fa-solid fa-sliders"></i>
-            <span>⚙️ 設定</span>
-        </button>
+        <button id="nav-work" class="nav-item active" onclick="showPage('work')">💼 時數</button>
+        <button id="nav-config" class="nav-item" onclick="showPage('config')">⚙️ 設定</button>
     </div>
 
-<script>
-    // 邏輯保持不變，確保功能正常
-    let records = JSON.parse(localStorage.getItem('workRecords')) || [];
-    let lastSettleTime = parseInt(localStorage.getItem('lastSettleTime')) || 0;
+    <!-- Script 部分保持不變，維持原有功能 -->
+    <script>
+        let records = JSON.parse(localStorage.getItem('workRecords')) || [];
+        let lastSettleTime = parseInt(localStorage.getItem('lastSettleTime')) || 0;
 
-    function showPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        document.getElementById('page-' + pageId).classList.add('active');
-        document.getElementById('nav-' + pageId).classList.add('active');
-        window.scrollTo(0, 0);
-        renderAll();
-    }
-
-    function initFilters() {
-        const mSelect = document.getElementById('monthSelect');
-        const now = new Date();
-        for (let i = 1; i <= 12; i++) {
-            mSelect.add(new Option(`${i} 月`, i));
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.getElementById('nav-' + pageId).classList.add('active');
+            window.scrollTo(0, 0);
+            renderAll();
         }
-        document.getElementById('yearSelect').value = now.getFullYear();
-        mSelect.value = now.getMonth() + 1;
-    }
 
-    function addRecord() {
-        const h = parseFloat(document.getElementById('dailyHour').value) || 0;
-        const min = parseFloat(document.getElementById('dailyMin').value) || 0;
-        const total = h + (min / 60);
-        if (total <= 0) return;
-
-        const now = new Date();
-        records.unshift({ id: Date.now(), year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(), hours: total });
-        saveToStorage();
-        document.getElementById('dailyHour').value = "";
-        document.getElementById('dailyMin').value = "";
-        renderAll();
-    }
-
-    function handleDateClick(y, m, d, dayRecords) {
-        const currentTotal = dayRecords.reduce((s, r) => s + r.hours, 0).toFixed(1);
-        const newVal = prompt(`修改 [ ${m}/${d} ] 的工時：\n(目前累計：${currentTotal} hr)\n輸入 0 可清除該日紀錄`, currentTotal);
-        
-        if (newVal !== null && !isNaN(newVal)) {
-            const parsedVal = parseFloat(newVal);
-            records = records.filter(r => !(r.year === y && r.month === m && r.day === d));
-            if (parsedVal > 0) {
-                records.unshift({ id: Date.now(), year: y, month: m, day: d, hours: parsedVal });
+        function initFilters() {
+            const mSelect = document.getElementById('monthSelect');
+            const now = new Date();
+            for (let i = 1; i <= 12; i++) {
+                mSelect.add(new Option(`${i} 月`, i));
             }
+            document.getElementById('yearSelect').value = now.getFullYear();
+            mSelect.value = now.getMonth() + 1;
+        }
+
+        function addRecord() {
+            const h = parseFloat(document.getElementById('dailyHour').value) || 0;
+            const min = parseFloat(document.getElementById('dailyMin').value) || 0;
+            const total = h + (min / 60);
+            if (total <= 0) return;
+
+            const now = new Date();
+            records.unshift({ id: Date.now(), year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(), hours: total });
             saveToStorage();
+            document.getElementById('dailyHour').value = "";
+            document.getElementById('dailyMin').value = "";
             renderAll();
         }
-    }
 
-    function saveToStorage() {
-        localStorage.setItem('workRecords', JSON.stringify(records));
-        localStorage.setItem('workGoal', document.getElementById('goalInput').value);
-    }
-
-    function renderAll() {
-        const goal = parseFloat(document.getElementById('goalInput').value) || 0;
-        const year = parseInt(document.getElementById('yearSelect').value);
-        const month = parseInt(document.getElementById('monthSelect').value);
-        const grid = document.getElementById('calendarGrid');
-        grid.innerHTML = "";
-
-        let sessionTotal = 0;
-        records.forEach(r => { if (r.id > lastSettleTime) sessionTotal += r.hours; });
-        document.getElementById('sessionTotal').innerText = sessionTotal.toFixed(1);
-        document.getElementById('sessionGap').innerText = Math.max(0, goal - sessionTotal).toFixed(1);
-
-        ['日', '一', '二', '三', '四', '五', '六'].forEach(w => {
-            const h = document.createElement('div'); h.className = 'calendar-day-head'; h.innerText = w;
-            grid.appendChild(h);
-        });
-
-        const firstDay = new Date(year, month - 1, 1).getDay();
-        const daysInMonth = new Date(year, month, 0).getDate();
-        for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
-
-        for (let i = 1; i <= daysInMonth; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'calendar-cell';
-            const dayRecords = records.filter(r => r.year === year && r.month === month && r.day === i);
-            if (dayRecords.length > 0) {
-                cell.classList.add('has-data');
-                const sum = dayRecords.reduce((s, r) => s + r.hours, 0);
-                cell.innerHTML = `<span class="date-num">${i}</span><div class="work-label">${sum.toFixed(1)}h</div>`;
-            } else { cell.innerHTML = `<span class="date-num">${i}</span>`; }
-            cell.onclick = () => handleDateClick(year, month, i, dayRecords);
-            grid.appendChild(cell);
+        function handleDateClick(y, m, d, dayRecords) {
+            const currentTotal = dayRecords.reduce((s, r) => s + r.hours, 0).toFixed(1);
+            const newVal = prompt(`修改 [ ${m}/${d} ] 的工時：\n(目前累計：${currentTotal} hr)\n輸入 0 可清除該日紀錄`, currentTotal);
+            
+            if (newVal !== null && !isNaN(newVal)) {
+                const parsedVal = parseFloat(newVal);
+                records = records.filter(r => !(r.year === y && r.month === m && r.day === d));
+                if (parsedVal > 0) {
+                    records.unshift({ id: Date.now(), year: y, month: m, day: d, hours: parsedVal });
+                }
+                saveToStorage();
+                renderAll();
+            }
         }
-    }
 
-    function settleAndReset() {
-        if (confirm("確定完成本期結算？累計時數將歸零重新計算。")) {
-            lastSettleTime = Date.now();
-            localStorage.setItem('lastSettleTime', lastSettleTime);
-            renderAll();
+        function saveToStorage() {
+            localStorage.setItem('workRecords', JSON.stringify(records));
+            localStorage.setItem('workGoal', document.getElementById('goalInput').value);
         }
-    }
 
-    function exportData() {
-        const data = { records, lastSettleTime, goal: document.getElementById('goalInput').value };
-        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = `WorkBackup_${new Date().toLocaleDateString()}.json`; a.click();
-    }
+        function renderAll() {
+            const goal = parseFloat(document.getElementById('goalInput').value) || 0;
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = "";
 
-    function importData(e) {
-        const file = e.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const data = JSON.parse(event.target.result);
-                records = data.records || []; lastSettleTime = data.lastSettleTime || 0;
-                document.getElementById('goalInput').value = data.goal || 38;
-                saveToStorage(); alert("還原成功！"); showPage('work');
-            } catch(e) { alert("檔案格式錯誤！"); }
-        };
-        reader.readAsText(file);
-    }
+            let sessionTotal = 0;
+            records.forEach(r => { if (r.id > lastSettleTime) sessionTotal += r.hours; });
+            document.getElementById('sessionTotal').innerText = sessionTotal.toFixed(1);
+            document.getElementById('sessionGap').innerText = Math.max(0, goal - sessionTotal).toFixed(1);
 
-    initFilters();
-    if(localStorage.getItem('workGoal')) document.getElementById('goalInput').value = localStorage.getItem('workGoal');
-    renderAll();
-</script>
+            ['日', '一', '二', '三', '四', '五', '六'].forEach(w => {
+                const h = document.createElement('div'); h.className = 'calendar-day-head'; h.innerText = w;
+                grid.appendChild(h);
+            });
 
+            const firstDay = new Date(year, month - 1, 1).getDay();
+            const daysInMonth = new Date(year, month, 0).getDate();
+            for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell';
+                const dayRecords = records.filter(r => r.year === year && r.month === month && r.day === i);
+                if (dayRecords.length > 0) {
+                    cell.classList.add('has-data');
+                    const sum = dayRecords.reduce((s, r) => s + r.hours, 0);
+                    cell.innerHTML = `<span class="date-num">${i}</span><div class="work-label">${sum.toFixed(1)}h</div>`;
+                } else { cell.innerHTML = `<span class="date-num">${i}</span>`; }
+                cell.onclick = () => handleDateClick(year, month, i, dayRecords);
+                grid.appendChild(cell);
+            }
+        }
+
+        function settleAndReset() {
+            if (confirm("確定完成本期結算？累計時數將歸零重新計算。")) {
+                lastSettleTime = Date.now();
+                localStorage.setItem('lastSettleTime', lastSettleTime);
+                renderAll();
+            }
+        }
+
+        function exportData() {
+            const data = { records, lastSettleTime, goal: document.getElementById('goalInput').value };
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `WorkBackup_${new Date().toLocaleDateString()}.json`; a.click();
+        }
+
+        function importData(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    records = data.records || []; lastSettleTime = data.lastSettleTime || 0;
+                    document.getElementById('goalInput').value = data.goal || 38;
+                    saveToStorage(); alert("還原成功！"); showPage('work');
+                } catch(e) { alert("檔案格式錯誤！"); }
+            };
+            reader.readAsText(file);
+        }
+
+        initFilters();
+        if(localStorage.getItem('workGoal')) document.getElementById('goalInput').value = localStorage.getItem('workGoal');
+        renderAll();
+    </script>
 </body>
 </html>
