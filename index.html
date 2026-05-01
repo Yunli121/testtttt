@@ -20,7 +20,7 @@
             background: var(--bg-gradient);
             background-attachment: fixed;
             margin: 0;
-            padding-bottom: 80px; /* 預留底部導航空間 */
+            padding-bottom: 90px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -48,7 +48,11 @@
         input, select {
             width: 100%; padding: 10px; box-sizing: border-box; border: var(--border-style);
             border-radius: 12px; font-size: 16px; outline: none; background: #fff; font-weight: bold;
+            appearance: none;
         }
+
+        .filter-row { display: flex; gap: 8px; margin-top: 5px; }
+        .filter-row select { flex: 1; }
 
         .progress-section {
             background: rgba(255, 255, 255, 0.5); border: var(--border-style);
@@ -90,41 +94,19 @@
             border-radius: 4px; margin-top: 4px; max-width: 90%;
         }
 
-        /* 修正後的底部導覽：固定在最下方，不懸浮 */
+        /* 底部導覽：更新按鈕標籤 */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 70px;
-            background: #fff;
-            border-top: var(--border-style);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            padding-bottom: env(safe-area-inset-bottom); /* 適應 iPhone 底部槓槓 */
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+            background: #fff; border-top: var(--border-style); display: flex;
+            justify-content: space-around; align-items: center; z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
         }
         .nav-item { 
-            flex: 1;
-            height: 100%;
-            background: none; 
-            border: none; 
-            font-weight: 900; 
-            color: #aaa; 
-            cursor: pointer; 
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
+            flex: 1; height: 100%; background: none; border: none; font-weight: 900; 
+            color: #aaa; cursor: pointer; font-size: 16px; display: flex;
+            align-items: center; justify-content: center; transition: 0.2s;
         }
-        .nav-item.active { 
-            color: #4a148c; 
-            background: #f3e5f5; /* 點擊後的頁籤背景色 */
-            text-decoration: underline; 
-            text-underline-offset: 6px; 
-        }
+        .nav-item.active { color: #4a148c; background: #f3e5f5; text-decoration: underline; text-underline-offset: 6px; }
 
         .setting-section { border-bottom: 2px dashed #4a148c; padding: 20px 0; text-align: left; }
         .setting-section:last-child { border-bottom: none; }
@@ -168,7 +150,14 @@
             <button class="btn-settle" onclick="settleAndReset()">🏁 完成本期結算 (統計歸零)</button>
 
             <div class="input-group">
-                <select id="monthFilter" onchange="renderAll()"></select>
+                <label>🔍 歷史回顧 (年份 / 月份)</label>
+                <div class="filter-row">
+                    <select id="yearSelect" onchange="renderAll()">
+                        <option value="2026">2026 年</option>
+                        <option value="2027">2027 年</option>
+                    </select>
+                    <select id="monthSelect" onchange="renderAll()"></select>
+                </div>
             </div>
 
             <div class="calendar-grid" id="calendarGrid"></div>
@@ -191,10 +180,10 @@
         </div>
     </div>
 
-    <!-- 底部導覽：固定定位 -->
+    <!-- 更新後的導覽列文字 -->
     <div class="bottom-nav">
-        <button id="nav-work" class="nav-item active" onclick="showPage('work')">LOGS</button>
-        <button id="nav-config" class="nav-item" onclick="showPage('config')">CONFIG</button>
+        <button id="nav-work" class="nav-item active" onclick="showPage('work')">💼 時數</button>
+        <button id="nav-config" class="nav-item" onclick="showPage('config')">⚙️ 設定</button>
     </div>
 
 <script>
@@ -206,17 +195,18 @@
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById('page-' + pageId).classList.add('active');
         document.getElementById('nav-' + pageId).classList.add('active');
-        window.scrollTo(0, 0); // 切換頁面時回到頂部
+        window.scrollTo(0, 0);
         renderAll();
     }
 
-    function initMonthFilter() {
-        const select = document.getElementById('monthFilter');
+    function initFilters() {
+        const mSelect = document.getElementById('monthSelect');
         const now = new Date();
-        for (let i = 0; i < 12; i++) {
-            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            select.add(new Option(`${d.getFullYear()}年 ${d.getMonth() + 1}月`, `${d.getFullYear()}-${d.getMonth() + 1}`));
+        for (let i = 1; i <= 12; i++) {
+            mSelect.add(new Option(`${i} 月`, i));
         }
+        document.getElementById('yearSelect').value = now.getFullYear();
+        mSelect.value = now.getMonth() + 1;
     }
 
     function addRecord() {
@@ -255,8 +245,8 @@
 
     function renderAll() {
         const goal = parseFloat(document.getElementById('goalInput').value) || 0;
-        const filterVal = document.getElementById('monthFilter').value || `${new Date().getFullYear()}-${new Date().getMonth() + 1}`;
-        const [year, month] = filterVal.split('-').map(Number);
+        const year = parseInt(document.getElementById('yearSelect').value);
+        const month = parseInt(document.getElementById('monthSelect').value);
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = "";
 
@@ -307,15 +297,17 @@
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = (event) => {
-            const data = JSON.parse(event.target.result);
-            records = data.records || []; lastSettleTime = data.lastSettleTime || 0;
-            document.getElementById('goalInput').value = data.goal || 38;
-            saveToStorage(); alert("還原成功！"); showPage('work');
+            try {
+                const data = JSON.parse(event.target.result);
+                records = data.records || []; lastSettleTime = data.lastSettleTime || 0;
+                document.getElementById('goalInput').value = data.goal || 38;
+                saveToStorage(); alert("還原成功！"); showPage('work');
+            } catch(e) { alert("檔案格式錯誤！"); }
         };
         reader.readAsText(file);
     }
 
-    initMonthFilter();
+    initFilters();
     if(localStorage.getItem('workGoal')) document.getElementById('goalInput').value = localStorage.getItem('workGoal');
     renderAll();
 </script>
