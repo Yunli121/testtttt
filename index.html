@@ -5,203 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>💼 工作時數管理</title>
 
-    <!-- Apple 專屬圖示與 App 模式設定 -->
+    <!-- Apple Web App 設定 -->
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/10433/10433049.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="工作時數">
 
-    <!-- 導入 Google Fonts 與 Font Awesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #f3e5f5 0%, #e1f5fe 100%);
-            --accent-color: #e1bee7; 
-            --warning-color: #fffde7; 
-            --border-style: 2.2px solid #4a148c;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --primary-text: #4a148c;
-            --shadow: 10px 10px 0px #4a148c;
+            --bg-color: #f3e5f5;
+            --accent-blue: #e1f5fe;
+            --border-val: 2.2px solid #000; /* 你最愛的 Neubrutalism 粗線條 */
+            --card-bg: #fff;
         }
 
         body {
-            font-family: 'Quicksand', -apple-system, sans-serif;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
+            font-family: -apple-system, sans-serif;
+            background-color: var(--bg-color);
             margin: 0;
-            padding-bottom: 90px;
+            padding-bottom: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
         }
-
-        /* 讓 App 模式下頂部不會太擠 */
-        @media screen and (display-mode: standalone) {
-            body { padding-top: env(safe-area-inset-top); }
-        }
-
-        .page { display: none; width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
-        .page.active { display: block; }
 
         .container {
+            width: 90%;
+            max-width: 400px;
+            margin-top: 30px;
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            padding: 25px;
-            border: var(--border-style);
-            box-shadow: var(--shadow);
-            border-radius: 24px;
-            text-align: center;
+            border: var(--border-val);
+            box-shadow: 8px 8px 0px #000;
+            padding: 20px;
+            border-radius: 15px;
         }
 
-        h2 { margin: 0 0 15px 0; color: var(--primary-text); font-size: 22px; font-weight: 900; }
+        /* 底部導覽：固定在最下，不要懸浮 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: #fff;
+            border-top: var(--border-val);
+            display: flex;
+            z-index: 1000;
+        }
 
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; color: #6a1b9a; }
-        label i { margin-right: 5px; color: #4a148c; }
+        .nav-item {
+            flex: 1;
+            border: none;
+            background: none;
+            font-size: 18px;
+            font-weight: 900;
+            color: #000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-        input, select {
-            width: 100%; padding: 12px; box-sizing: border-box; border: var(--border-style);
-            border-radius: 14px; font-size: 16px; outline: none; background: #fff; 
-            font-weight: 700; font-family: 'Quicksand', sans-serif;
+        .nav-item.active {
+            background-color: var(--accent-blue);
+        }
+
+        /* 歷史回顧：年份月份分開 */
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        select, input {
+            flex: 1;
+            padding: 10px;
+            border: var(--border-val);
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
         }
 
         .btn-main {
-            width: 100%; padding: 14px; background-color: #ffffff; border: var(--border-style);
-            border-radius: 12px; font-weight: 900; font-size: 16px; color: var(--primary-text);
-            cursor: pointer; box-shadow: 5px 5px 0px #4a148c; margin-bottom: 15px;
-            font-family: 'Quicksand', sans-serif;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%;
+            padding: 15px;
+            background: #fff;
+            border: var(--border-val);
+            box-shadow: 4px 4px 0px #000;
+            font-weight: 900;
+            margin: 15px 0;
         }
-        .btn-main:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #4a148c; }
-
-        .progress-section {
-            background: rgba(255, 255, 255, 0.5); border: var(--border-style);
-            border-radius: 20px; padding: 15px; margin-bottom: 15px;
-        }
-
-        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-        .stat-box { background: var(--accent-color); border: var(--border-style); padding: 10px; border-radius: 15px; font-weight: 700; }
-        .stat-box.highlight { background: var(--warning-color); }
 
         .calendar-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; background: #fff;
-            padding: 10px; border: var(--border-style); border-radius: 18px;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-top: 10px;
         }
-        .calendar-day-head { font-size: 11px; font-weight: 700; color: #7b1fa2; padding-bottom: 5px; }
-        .calendar-cell {
-            aspect-ratio: 1 / 1.3; border: 1px solid #eee; border-radius: 10px;
-            display: flex; flex-direction: column; align-items: center; padding-top: 5px;
-            font-size: 12px; cursor: pointer;
-        }
-        .calendar-cell.has-data { background-color: #f3e5f5; border: 1.5px solid #4a148c; }
-        .work-label { background: #4a148c; color: white; font-size: 9px; padding: 2px 4px; border-radius: 5px; margin-top: 4px; }
 
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
-            background: #fff; border-top: var(--border-style); display: flex;
-            justify-content: space-around; align-items: center; z-index: 1000;
-            padding-bottom: env(safe-area-inset-bottom);
+        .calendar-cell {
+            border: 1px solid #000;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
         }
-        .nav-item { 
-            flex: 1; height: 100%; background: none; border: none; font-weight: 700; 
-            color: #aaa; cursor: pointer; font-size: 15px; display: flex;
-            flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-            font-family: 'Quicksand', sans-serif;
-        }
-        .nav-item i { font-size: 20px; }
-        .nav-item.active { color: #4a148c; background: #f3e5f5; }
+        
+        .has-data { background-color: var(--accent-blue); border: var(--border-val); }
     </style>
 </head>
 <body>
 
-    <!-- 時數紀錄頁面 -->
-    <div id="page-work" class="page active">
-        <div class="container">
-            <h2><i class="fa-solid fa-calendar-check"></i> 工作時數管理</h2>
-            
-            <div class="input-group">
-                <label><i class="fa-solid fa-bullseye"></i> 目標時數 (hr)</label>
-                <input type="number" id="goalInput" value="38" oninput="saveToStorage(); renderAll();">
-            </div>
-
-            <div class="input-group">
-                <label><i class="fa-solid fa-clock"></i> 今日時數</label>
-                <div style="display: flex; gap: 8px;">
-                    <input type="number" id="dailyHour" placeholder="時" style="flex:1">
-                    <input type="number" id="dailyMin" placeholder="分" style="flex:1">
-                </div>
-            </div>
-
-            <button class="btn-main" onclick="addRecord()">
-                <i class="fa-solid fa-floppy-disk"></i> 儲存時數 SAVE
-            </button>
-
-            <div class="progress-section">
-                <div class="stats-container">
-                    <div class="stat-box highlight">剩餘 <span id="sessionGap">0</span> hr</div>
-                    <div class="stat-box">累計 <span id="sessionTotal">0</span> hr</div>
-                </div>
-            </div>
-
-            <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="container">
+        <h2>💼 工作時數紀錄</h2>
+        <div class="filter-row">
+            <select id="yearSelect"><option value="2026">2026</option><option value="2027">2027</option></select>
+            <select id="monthSelect"></select>
         </div>
+        <button class="btn-main">💾 儲存時數 SAVE</button>
+        <div class="calendar-grid" id="calendarGrid"></div>
     </div>
 
-    <!-- 設定頁面 -->
-    <div id="page-config" class="page">
-        <div class="container">
-            <h2><i class="fa-solid fa-gear"></i> 設定</h2>
-            <button class="btn-main" onclick="exportData()"><i class="fa-solid fa-download"></i> 匯出備份</button>
-            <button class="btn-main" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-upload"></i> 匯入備份</button>
-            <input type="file" id="importFile" style="display:none" onchange="importData(event)">
-        </div>
-    </div>
-
-    <!-- 底部導覽列 -->
     <div class="bottom-nav">
-        <button id="nav-work" class="nav-item active" onclick="showPage('work')">
-            <i class="fa-solid fa-briefcase"></i>
-            <span>💼 時數</span>
-        </button>
-        <button id="nav-config" class="nav-item" onclick="showPage('config')">
-            <i class="fa-solid fa-sliders"></i>
-            <span>⚙️ 設定</span>
-        </button>
+        <button class="nav-item active">💼 時數</button>
+        <button class="nav-item">⚙️ 設定</button>
     </div>
 
-<script>
-    // ... 邏輯部分 (與前一版相同) ...
-    let records = JSON.parse(localStorage.getItem('workRecords')) || [];
-    let lastSettleTime = parseInt(localStorage.getItem('lastSettleTime')) || 0;
-
-    function showPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        document.getElementById('page-' + pageId).classList.add('active');
-        document.getElementById('nav-' + pageId).classList.add('active');
-        renderAll();
-    }
-
-    function saveToStorage() {
-        localStorage.setItem('workRecords', JSON.stringify(records));
-        localStorage.setItem('workGoal', document.getElementById('goalInput').value);
-    }
-
-    function renderAll() {
-        const goal = parseFloat(document.getElementById('goalInput').value) || 0;
-        let sessionTotal = 0;
-        records.forEach(r => { if (r.id > lastSettleTime) sessionTotal += r.hours; });
-        document.getElementById('sessionTotal').innerText = sessionTotal.toFixed(1);
-        document.getElementById('sessionGap').innerText = Math.max(0, goal - sessionTotal).toFixed(1);
-        // ... (省略部分渲染代碼以保持簡潔) ...
-    }
-
-    // 初始渲染
-    renderAll();
-</script>
-
+    <script>
+        // 初始化月份
+        const mSelect = document.getElementById('monthSelect');
+        for (let i = 1; i <= 12; i++) mSelect.add(new Option(i + ' 月', i));
+        mSelect.value = new Date().getMonth() + 1;
+    </script>
 </body>
 </html>
